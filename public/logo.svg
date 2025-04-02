@@ -1,0 +1,7 @@
+<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 10H30C35.5228 10 40 14.4772 40 20V30C40 35.5228 35.5228 40 30 40H10V10Z" fill="#1D4ED8"/>
+  <path d="M15 15H25C27.7614 15 30 17.2386 30 20V30C30 32.7614 27.7614 35 25 35H15V15Z" fill="#3B82F6"/>
+  <text x="17" y="28" font-family="Arial" font-weight="bold" font-size="16" fill="white">DR</text>
+  <path d="M25 35L15 35L15 40L25 40C27.7614 40 30 37.7614 30 35C30 32.2386 27.7614 30 25 30L20 30L20 25L25 25C27.7614 25 30 22.7614 30 20C30 17.2386 27.7614 15 25 15L15 15L15 20L25 20" stroke="#FFC700" stroke-width="2"/>
+</svg>
+
