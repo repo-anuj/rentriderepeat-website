@@ -9,8 +9,9 @@ import {
   Map,
   Users,
   Shield,
-  Tool,
+  Wrench,
   ShoppingBag,
+  CheckCircle,
   Search,
   ArrowRight,
 } from "lucide-react"
@@ -81,7 +82,7 @@ export default function Services() {
       ],
     },
     {
-      icon: <Tool className="h-12 w-12 text-primary" />,
+      icon: <Wrench className="h-12 w-12 text-primary" />,
       title: "Maintenance & Repairs",
       description:
         "Professional motorcycle maintenance and repair services to ensure your ride is always in optimal condition. Available at all our locations across India.",
@@ -109,6 +110,7 @@ export default function Services() {
       title: "Himalayan Adventure",
       price: 15000,
       duration: "7 days",
+      description: "Experience the majestic Himalayas on a thrilling 7-day motorcycle adventure through breathtaking mountain passes and serene valleys.",
       features: [
         "Royal Enfield Himalayan motorcycle",
         "Experienced guide",
@@ -124,6 +126,7 @@ export default function Services() {
       title: "Golden Triangle Tour",
       price: 12000,
       duration: "5 days",
+      description: "Explore India's iconic Golden Triangle on motorcycle, visiting the historic cities of Delhi, Agra, and Jaipur with their magnificent architecture and rich culture.",
       features: [
         "Choice of premium motorcycle",
         "Guided tour of Delhi, Agra, and Jaipur",
@@ -139,6 +142,7 @@ export default function Services() {
       title: "Coastal Karnataka Ride",
       price: 10000,
       duration: "4 days",
+      description: "Ride along the stunning coastline of Karnataka, experiencing pristine beaches, historic temples, and delicious coastal cuisine on this 4-day motorcycle journey.",
       features: [
         "Choice of premium motorcycle",
         "Route map and guidance",

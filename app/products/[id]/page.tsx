@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion } from "framer-motion"
-import { ArrowRight, Star, Calendar, Clock, Shield, ChevronRight, Check } from "lucide-react"
+import { ArrowRight, Star, Clock, Shield, ChevronRight, } from "lucide-react"
 import { Bike, Zap, RotateCw, Cog, Droplet, Weight, Ruler, Activity, Disc, CheckCircle, Calendar as CalendarIcon, CreditCard, FileText, Map, MapPin, Mountain, Users } from "lucide-react"
 
 export default function ProductDetail() {
