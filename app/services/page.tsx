@@ -5,16 +5,14 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import {
+  Bike,
+  Map,
+  Users,
+  Shield,
+  Tool,
+  ShoppingBag,
+  Search,
   ArrowRight,
-  CheckCircle,
-  Smartphone,
-  Globe,
-  PenTool,
-  BarChart,
-  Code,
-  Database,
-  Cloud,
-  ShoppingCart,
 } from "lucide-react"
 
 export default function Services() {
@@ -39,95 +37,145 @@ export default function Services() {
 
   const services = [
     {
-      icon: <Smartphone className="h-12 w-12 text-primary" />,
-      title: "Mobile App Development",
+      icon: <Bike className="h-12 w-12 text-primary" />,
+      title: "Motorcycle Rentals",
       description:
-        "Custom mobile applications for iOS and Android platforms that engage users and drive business growth.",
+        "Choose from our wide selection of premium Indian motorcycles for daily, weekly, or monthly rentals. All motorcycles are regularly maintained and safety-checked.",
       features: [
-        "Native and cross-platform development",
-        "User-centered design approach",
-        "Seamless integration with existing systems",
-        "Ongoing support and maintenance",
+        "Wide selection of premium Indian motorcycles",
+        "Daily, weekly, or monthly rentals available",
+        "Regular maintenance and safety checks",
       ],
     },
     {
-      icon: <Globe className="h-12 w-12 text-primary" />,
-      title: "Web Development",
+      icon: <Map className="h-12 w-12 text-primary" />,
+      title: "Guided Tours",
       description:
-        "Responsive, high-performance websites and web applications that deliver exceptional user experiences.",
+        "Explore the diverse landscapes of India with our experienced guides. We offer guided motorcycle tours to popular destinations like Ladakh, Rajasthan, Kerala, and the Northeast.",
       features: [
-        "Custom website development",
-        "E-commerce solutions",
-        "Content management systems",
-        "Progressive web applications",
+        "Experienced guides",
+        "Popular destinations like Ladakh, Rajasthan, Kerala, and the Northeast",
+        "Scenic routes and breathtaking views",
       ],
     },
     {
-      icon: <PenTool className="h-12 w-12 text-primary" />,
-      title: "UI/UX Design",
-      description: "User-centered design that enhances user experience, engagement, and conversion rates.",
-      features: [
-        "User research and testing",
-        "Wireframing and prototyping",
-        "Visual design and branding",
-        "Interaction design",
-      ],
-    },
-    {
-      icon: <BarChart className="h-12 w-12 text-primary" />,
-      title: "Digital Marketing",
-      description: "Strategic marketing solutions to grow your online presence and reach your target audience.",
-      features: [
-        "Search engine optimization (SEO)",
-        "Social media marketing",
-        "Pay-per-click advertising",
-        "Email marketing campaigns",
-      ],
-    },
-    {
-      icon: <Code className="h-12 w-12 text-primary" />,
-      title: "Custom Software Development",
+      icon: <Users className="h-12 w-12 text-primary" />,
+      title: "Group Rides",
       description:
-        "Tailored software solutions designed to address your specific business challenges and requirements.",
+        "Join our community of motorcycle enthusiasts for regular group rides to scenic locations around major Indian cities. Perfect for meeting fellow riders and discovering new routes.",
       features: [
-        "Enterprise software development",
-        "SaaS application development",
-        "API development and integration",
-        "Legacy system modernization",
+        "Regular group rides to scenic locations",
+        "Meet fellow riders and discover new routes",
+        "Experienced guides and safety support",
       ],
     },
     {
-      icon: <Database className="h-12 w-12 text-primary" />,
-      title: "Data Analytics",
-      description: "Transform your data into actionable insights that drive informed business decisions.",
+      icon: <Shield className="h-12 w-12 text-primary" />,
+      title: "Motorcycle Insurance",
+      description:
+        "Comprehensive insurance coverage for your rental period, giving you peace of mind during your journey across India's diverse terrains.",
       features: [
-        "Data visualization and reporting",
-        "Predictive analytics",
-        "Business intelligence solutions",
-        "Big data processing",
+        "Comprehensive insurance coverage",
+        "Peace of mind during your journey",
+        "Coverage for accidents and damages",
       ],
     },
     {
-      icon: <Cloud className="h-12 w-12 text-primary" />,
-      title: "Cloud Solutions",
-      description: "Scalable, secure cloud infrastructure and migration services to optimize your operations.",
+      icon: <Tool className="h-12 w-12 text-primary" />,
+      title: "Maintenance & Repairs",
+      description:
+        "Professional motorcycle maintenance and repair services to ensure your ride is always in optimal condition. Available at all our locations across India.",
       features: [
-        "Cloud migration strategies",
-        "Infrastructure as a Service (IaaS)",
-        "Platform as a Service (PaaS)",
-        "Cloud security and compliance",
+        "Professional maintenance and repair services",
+        "Optimal condition for your ride",
+        "Available at all our locations across India",
       ],
     },
     {
-      icon: <ShoppingCart className="h-12 w-12 text-primary" />,
-      title: "E-Commerce Solutions",
-      description: "End-to-end e-commerce development to help you sell products and services online effectively.",
+      icon: <ShoppingBag className="h-12 w-12 text-primary" />,
+      title: "Riding Gear & Accessories",
+      description:
+        "Quality riding gear and accessories for rent or purchase, including helmets, jackets, gloves, and luggage solutions for long rides through India.",
       features: [
-        "Custom e-commerce platforms",
-        "Shopping cart development",
-        "Payment gateway integration",
-        "Inventory management systems",
+        "Quality riding gear and accessories",
+        "Rent or purchase options",
+        "Helmets, jackets, gloves, and luggage solutions",
       ],
+    },
+  ]
+
+  const packages = [
+    {
+      title: "Himalayan Adventure",
+      price: 15000,
+      duration: "7 days",
+      features: [
+        "Royal Enfield Himalayan motorcycle",
+        "Experienced guide",
+        "Accommodation in mountain lodges",
+        "Fuel and maintenance",
+        "Support vehicle",
+        "Safety gear",
+      ],
+      popular: true,
+      image: "https://images.unsplash.com/photo-1604357209793-fca5dca89f97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Golden Triangle Tour",
+      price: 12000,
+      duration: "5 days",
+      features: [
+        "Choice of premium motorcycle",
+        "Guided tour of Delhi, Agra, and Jaipur",
+        "Hotel accommodations",
+        "Fuel and maintenance",
+        "Monument entry fees",
+        "Safety gear",
+      ],
+      popular: false,
+      image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Coastal Karnataka Ride",
+      price: 10000,
+      duration: "4 days",
+      features: [
+        "Choice of premium motorcycle",
+        "Route map and guidance",
+        "Beachside accommodations",
+        "Fuel and maintenance",
+        "Breakfast included",
+        "Safety gear",
+      ],
+      popular: false,
+      image: "https://images.unsplash.com/photo-1566041510639-8d95a2490bfb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    },
+  ]
+
+  const testimonials = [
+    {
+      name: "Rahul Sharma",
+      location: "Delhi",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      quote:
+        "The Himalayan Adventure tour was the experience of a lifetime. The motorcycles were in excellent condition, and the guides were knowledgeable and friendly. I'll definitely be booking another tour soon!",
+    },
+    {
+      name: "Ananya Patel",
+      location: "Mumbai",
+      image:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      quote:
+        "I rented a Royal Enfield for a weekend trip to Lonavala, and the service was outstanding. The motorcycle was well-maintained, and the team was very helpful with route suggestions and tips.",
+    },
+    {
+      name: "Karthik Reddy",
+      location: "Bangalore",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
+      quote:
+        "The Coastal Karnataka Ride package was perfect for our group. The routes were scenic, the accommodations were comfortable, and the motorcycles performed flawlessly throughout the journey.",
     },
   ]
 
@@ -140,8 +188,7 @@ export default function Services() {
             <motion.div initial="hidden" animate="visible" variants={fadeIn} className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">Our Services</h1>
               <p className="text-lg text-gray-600">
-                Comprehensive digital solutions tailored to your business needs. We help you navigate the digital
-                landscape with confidence.
+                Discover our comprehensive range of motorcycle rental services and tour packages across India
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/login">
@@ -162,8 +209,8 @@ export default function Services() {
               className="relative"
             >
               <Image
-                src="/Service.svg"
-                alt="Our Services"
+                src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                alt="Motorcycle Rental Services"
                 width={600}
                 height={500}
                 className="rounded-lg shadow-xl"
@@ -183,11 +230,11 @@ export default function Services() {
             viewport={{ once: true }}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4">
-              What We Offer
+            <motion.h2 variants={fadeIn} className="text-3xl text-black md:text-4xl font-bold mb-4">
+              Our Services
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              We provide a wide range of digital services to help your business thrive in the digital age.
+              We offer a wide range of motorcycle rental services and tour packages to meet your needs
             </motion.p>
           </motion.div>
 
@@ -198,7 +245,7 @@ export default function Services() {
             viewport={{ once: true }}
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {services.slice(0, 6).map((service, index) => (
+            {services.map((service, index) => (
               <motion.div
                 key={index}
                 variants={fadeIn}
@@ -221,7 +268,7 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Process Section */}
+      {/* Packages Section */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="container mx-auto px-4">
           <motion.div
@@ -230,81 +277,57 @@ export default function Services() {
             viewport={{ once: true }}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4">
-              Our Process
+            <motion.h2 variants={fadeIn} className="text-3xl text-black md:text-4xl font-bold mb-4">
+              Popular Tour Packages
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              We follow a structured approach to ensure successful project delivery and client satisfaction.
+              Explore India on two wheels with our curated motorcycle tour packages
             </motion.p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                alt="Our process"
-                width={600}
-                height={450}
-                className="rounded-lg shadow-lg"
-              />
-            </motion.div>
-
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={staggerContainer}
-              className="space-y-8"
-            >
-              {[
-                {
-                  number: "01",
-                  title: "Discovery & Planning",
-                  description:
-                    "We start by understanding your business, goals, and requirements to develop a strategic plan.",
-                },
-                {
-                  number: "02",
-                  title: "Design & Development",
-                  description:
-                    "Our team creates designs and develops solutions based on the approved plan and specifications.",
-                },
-                {
-                  number: "03",
-                  title: "Testing & Quality Assurance",
-                  description: "We thoroughly test all deliverables to ensure they meet our high standards of quality.",
-                },
-                {
-                  number: "04",
-                  title: "Deployment & Support",
-                  description:
-                    "We deploy the solution and provide ongoing support and maintenance to ensure continued success.",
-                },
-              ].map((step, index) => (
-                <motion.div key={index} variants={fadeIn} className="flex">
-                  <div className="mr-6">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-black font-bold">
-                      {step.number}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                    <p className="text-gray-600">{step.description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {packages.map((pkg, index) => (
+              <motion.div
+                key={index}
+                variants={fadeIn}
+                className="bg-white p-8 rounded-lg shadow-lg border border-gray-100 hover:border-primary transition-colors duration-300"
+              >
+                <div className="mb-4">
+                  <Image
+                    src={pkg.image}
+                    alt={pkg.title}
+                    width={400}
+                    height={300}
+                    className="rounded-lg shadow-lg"
+                  />
+                </div>
+                <h3 className="text-xl font-bold mb-2">{pkg.title}</h3>
+                <p className="text-gray-600 mb-4">{pkg.description}</p>
+                <p className="text-xl font-bold">
+                  ₹{pkg.price}
+                  <span className="text-sm font-normal text-gray-600">/{pkg.duration}</span>
+                </p>
+                <ul className="space-y-2">
+                  {pkg.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* Additional Services */}
+      {/* Testimonials Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <motion.div
@@ -313,11 +336,11 @@ export default function Services() {
             viewport={{ once: true }}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4">
-              Specialized Solutions
+            <motion.h2 variants={fadeIn} className="text-3xl text-black md:text-4xl font-bold mb-4">
+              What Our Customers Say
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              Additional services tailored to specific industry needs and challenges.
+              Don't just take our word for it - hear from our satisfied customers
             </motion.p>
           </motion.div>
 
@@ -326,70 +349,25 @@ export default function Services() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-8"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {services.slice(6, 8).map((service, index) => (
+            {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
                 variants={fadeIn}
                 className="bg-white p-8 rounded-lg shadow-lg border border-gray-100 hover:border-primary transition-colors duration-300"
               >
-                <div className="mb-4">{service.icon}</div>
-                <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-                <ul className="space-y-2">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Industries Section */}
-      <section className="py-16 md:py-24 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
-          >
-            <motion.h2 variants={fadeIn} className="text-3xl md:text-4xl font-bold mb-4">
-              Industries We Serve
-            </motion.h2>
-            <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              We have experience working with clients across various industries.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8"
-          >
-            {[
-              { name: "Healthcare", icon: "🏥" },
-              { name: "Finance", icon: "💰" },
-              { name: "Education", icon: "🎓" },
-              { name: "Retail", icon: "🛍️" },
-              { name: "Technology", icon: "💻" },
-              { name: "Manufacturing", icon: "🏭" },
-            ].map((industry, index) => (
-              <motion.div
-                key={index}
-                variants={fadeIn}
-                className="bg-white p-6 rounded-lg shadow-lg border border-gray-100 text-center hover:border-primary transition-colors duration-300"
-              >
-                <div className="text-4xl mb-3">{industry.icon}</div>
-                <h3 className="font-bold">{industry.name}</h3>
+                <div className="mb-4">
+                  <Image
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    width={100}
+                    height={100}
+                    className="rounded-full shadow-lg"
+                  />
+                </div>
+                <h3 className="text-xl font-bold mb-2">{testimonial.name}</h3>
+                <p className="text-gray-600 mb-4">{testimonial.quote}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -406,14 +384,14 @@ export default function Services() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready to Get Started?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready to Start Your Adventure?</h2>
             <p className="text-lg text-black/80 mb-8">
-              Contact us today to discuss your project and how we can help you achieve your digital goals.
+              Browse our selection of premium Indian motorcycles and book your rental today.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/login">
                 <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
-                  Get Started
+                  Browse Motorcycles
                 </Button>
               </Link>
               <Link href="/contact">
@@ -431,4 +409,3 @@ export default function Services() {
     </div>
   )
 }
-

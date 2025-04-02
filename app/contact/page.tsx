@@ -45,14 +45,13 @@ export default function Contact() {
             <motion.div initial="hidden" animate="visible" variants={fadeIn} className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">Contact Us</h1>
               <p className="text-lg text-gray-600">
-                Have questions about our bikes or rental process? Get in touch with our team and we'll get back to you
-                as soon as possible.
+                We're here to help you with any questions about our motorcycle rentals in India.
               </p>
               <div className="flex flex-wrap gap-4">
                 <a href="#contact-form">
                   <Button className="bg-primary hover:bg-primary/90 text-black font-medium">Send a Message</Button>
                 </a>
-                <a href="tel:+11234567890">
+                <a href="tel:+919876543210">
                   <Button variant="outline" className="font-medium">
                     Call Us <Phone className="ml-2 h-4 w-4" />
                   </Button>
@@ -67,8 +66,8 @@ export default function Contact() {
               className="relative"
             >
               <Image
-                src="/joyful boy riding on scooter.svg"
-                alt="Contact Us"
+                src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                alt="Contact BikeRent"
                 width={600}
                 height={500}
                 className="rounded-lg shadow-xl"
@@ -107,25 +106,25 @@ export default function Contact() {
               {
                 icon: <Phone className="h-10 w-10 text-primary" />,
                 title: "Phone",
-                details: ["+1 (123) 456-7890", "+1 (987) 654-3210"],
+                details: ["+91 98765 43210"],
                 action: {
                   text: "Call us",
-                  link: "tel:+11234567890",
+                  link: "tel:+919876543210",
                 },
               },
               {
                 icon: <Mail className="h-10 w-10 text-primary" />,
                 title: "Email",
-                details: ["info@bikerent.com", "support@bikerent.com"],
+                details: ["info@bikerent.in"],
                 action: {
                   text: "Email us",
-                  link: "mailto:info@bikerent.com",
+                  link: "mailto:info@bikerent.in",
                 },
               },
               {
                 icon: <MapPin className="h-10 w-10 text-primary" />,
                 title: "Location",
-                details: ["123 Bike Street", "Cycle City, CC 12345"],
+                details: ["123 MG Road, Bangalore, Karnataka, 560001, India"],
                 action: {
                   text: "Get directions",
                   link: "https://maps.google.com",
@@ -134,7 +133,7 @@ export default function Contact() {
               {
                 icon: <Clock className="h-10 w-10 text-primary" />,
                 title: "Business Hours",
-                details: ["Monday - Friday: 9AM - 6PM", "Saturday - Sunday: 10AM - 4PM"],
+                details: ["Monday - Saturday: 9:00 AM - 8:00 PM", "Sunday: 10:00 AM - 6:00 PM"],
                 action: {
                   text: "View hours",
                   link: "#business-hours",
@@ -178,9 +177,9 @@ export default function Contact() {
               transition={{ duration: 0.6 }}
               className="space-y-6"
             >
-              <h2 className="text-3xl md:text-4xl font-bold">Send Us a Message</h2>
-              <p className="text-lg text-gray-600">
-                Fill out the form below and we'll get back to you as soon as possible.
+              <h2 className="text-3xl font-bold mb-6">Send Us a Message</h2>
+              <p className="text-gray-600 mb-8">
+                Have questions about our motorcycle rentals or need assistance planning your trip across India? Fill out the form below and our team will get back to you as soon as possible.
               </p>
 
               <div className="bg-white p-6 rounded-lg shadow-md">
@@ -225,34 +224,32 @@ export default function Contact() {
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-100"
             >
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
                     <label htmlFor="name" className="font-medium">
                       Full Name
                     </label>
-                    <Input id="name" type="text" placeholder="John Doe" required />
+                    <Input id="name" type="text" placeholder="Your name" className="mt-1" />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="font-medium">
-                      Email Address
-                    </label>
-                    <Input id="email" type="email" placeholder="john@example.com" required />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
+                  <div>
                     <label htmlFor="phone" className="font-medium">
                       Phone Number
                     </label>
-                    <Input id="phone" type="tel" placeholder="+1 (123) 456-7890" />
+                    <Input id="phone" type="tel" placeholder="+91 XXXXX XXXXX" className="mt-1" />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="subject" className="font-medium">
-                      Subject
-                    </label>
-                    <Input id="subject" type="text" placeholder="Bike Rental Inquiry" required />
-                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label htmlFor="subject" className="font-medium">
+                    Subject
+                  </label>
+                  <select id="subject" className="mt-1">
+                    <option value="general">General Inquiry</option>
+                    <option value="booking">Booking Information</option>
+                    <option value="support">Customer Support</option>
+                    <option value="feedback">Feedback</option>
+                    <option value="partnership">Partnership Opportunities</option>
+                  </select>
                 </div>
 
                 <div className="space-y-2">
@@ -305,7 +302,7 @@ export default function Contact() {
               <div className="text-center">
                 <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
                 <h3 className="text-xl font-bold">BikeRent Main Location</h3>
-                <p className="text-gray-600">123 Bike Street, Cycle City, CC 12345</p>
+                <p className="text-gray-600">123 MG Road, Bangalore, Karnataka, 560001, India</p>
               </div>
             </div>
           </motion.div>
@@ -338,29 +335,29 @@ export default function Contact() {
           >
             {[
               {
-                question: "What types of bikes do you offer?",
+                question: "What documents do I need to rent a motorcycle?",
                 answer:
-                  "We offer a wide range of bikes including mountain bikes, road bikes, city bikes, electric bikes, and hybrid bikes. All our bikes are premium quality and regularly maintained.",
+                  "To rent a motorcycle, you'll need a valid driving license, Aadhar card or passport, and a security deposit. International customers will need an International Driving Permit along with their original license.",
               },
               {
-                question: "What is the rental process?",
+                question: "What is your cancellation policy?",
                 answer:
-                  "The rental process is simple: browse our selection online, choose your bike, select your rental dates, complete the booking, and pick up your bike at the designated location. You'll need to provide a valid ID and credit card for the security deposit.",
+                  "We offer free cancellation up to 24 hours before your scheduled rental. Cancellations made less than 24 hours in advance may be subject to a cancellation fee of 25% of the total rental amount.",
               },
               {
-                question: "What are your rental rates?",
+                question: "Do you provide helmets and safety gear?",
                 answer:
-                  "Our rental rates vary depending on the type of bike and rental duration. We offer hourly, daily, and weekly rates with discounts for longer rentals. Check our bike listings for specific pricing.",
+                  "Yes, we provide DOT-certified helmets with all our motorcycle rentals at no additional cost. Additional safety gear such as riding jackets, gloves, and knee guards are available for rent at nominal charges.",
               },
               {
-                question: "Do you provide helmets and other accessories?",
+                question: "Can I rent a motorcycle for long-distance travel across India?",
                 answer:
-                  "Yes, we provide helmets free of charge with every rental. We also offer additional accessories such as locks, lights, baskets, and child seats for a small fee.",
+                  "Absolutely! Many of our customers rent motorcycles for long-distance travel across India. We offer special packages for popular routes like Delhi-Ladakh, Mumbai-Goa, and the Golden Triangle. Contact us for customized itineraries and recommendations.",
               },
               {
-                question: "What happens if the bike gets damaged or stolen?",
+                question: "What happens if the motorcycle breaks down during my rental period?",
                 answer:
-                  "We provide basic insurance with every rental. For minor damages, you may be charged a repair fee. For theft, you'll need to file a police report and may be responsible for the deductible. We offer premium insurance options for additional coverage.",
+                  "In the unlikely event of a breakdown, we provide 24/7 roadside assistance across India. Simply call our emergency helpline, and we'll arrange for repairs or a replacement motorcycle as quickly as possible, depending on your location.",
               },
             ].map((faq, index) => (
               <motion.div key={index} variants={fadeIn} className="bg-white p-6 rounded-lg shadow-md">
@@ -384,12 +381,12 @@ export default function Contact() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready to Start Your Adventure?</h2>
             <p className="text-lg text-black/80 mb-8">
-              Browse our selection of premium bikes and book your rental today.
+              Browse our selection of premium Indian motorcycles and book your rental today.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/products">
                 <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
-                  Browse Bikes
+                  Browse Motorcycles
                 </Button>
               </Link>
               <a href="#contact-form">
@@ -407,4 +404,3 @@ export default function Contact() {
     </div>
   )
 }
-

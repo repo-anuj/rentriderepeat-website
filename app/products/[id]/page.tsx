@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion } from "framer-motion"
 import { ArrowRight, Star, Calendar, Clock, Shield, ChevronRight, Check } from "lucide-react"
+import { Bike, Zap, RotateCw, Cog, Droplet, Weight, Ruler, Activity, Disc, CheckCircle, Calendar as CalendarIcon, CreditCard, FileText, Map, MapPin, Mountain, Users } from "lucide-react"
 
 export default function ProductDetail() {
   const params = useParams()
@@ -20,110 +21,186 @@ export default function ProductDetail() {
   const bikes = [
     {
       id: 1,
-      name: "Mountain Explorer Pro",
-      category: "Mountain Bike",
-      price: 25,
+      name: "Royal Enfield Classic 350",
+      category: "Cruiser",
+      price: 1500,
       rating: 4.8,
+      features: ["Comfortable Seat", "Powerful Engine", "Vintage Design", "Fuel Efficient"],
       image:
-        "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       description:
-        "The Mountain Explorer Pro is a high-performance mountain bike designed for challenging terrains and thrilling adventures. With its durable frame, responsive suspension, and reliable braking system, this bike offers exceptional control and stability on rough trails.",
-      features: [
-        "Lightweight aluminum frame",
-        "Front and rear suspension",
-        "Hydraulic disc brakes",
-        "27-speed Shimano gears",
-        "Tubeless-ready wheels",
-        "Adjustable seat post",
-      ],
+        "The Royal Enfield Classic 350 is a timeless motorcycle that combines vintage aesthetics with modern performance. Its iconic design and comfortable riding position make it perfect for long rides through the diverse landscapes of India.",
       specifications: {
-        frame: "Aluminum Alloy",
-        fork: "RockShox XC 30",
-        gears: "Shimano Deore, 27-speed",
-        brakes: "Shimano Hydraulic Disc",
-        wheels: "29-inch tubeless-ready",
-        weight: "12.5 kg",
+        engine: "349cc, Single Cylinder, 4 Stroke",
+        power: "20.2 bhp @ 6100 rpm",
+        torque: "27 Nm @ 4000 rpm",
+        transmission: "5-Speed",
+        fuelCapacity: "13 liters",
+        weight: "195 kg",
+        seatHeight: "805 mm",
+        suspension: "Telescopic front, Twin shock absorbers rear",
+        brakes: "Disc front, Drum rear",
       },
     },
     {
       id: 2,
-      name: "City Cruiser Deluxe",
-      category: "City Bike",
-      price: 18,
+      name: "Bajaj Pulsar NS200",
+      category: "Sports",
+      price: 1200,
       rating: 4.6,
+      features: ["Sporty Design", "Powerful Engine", "Disc Brakes", "Digital Console"],
       image:
-        "https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       description:
-        "The City Cruiser Deluxe is a comfortable and stylish bike perfect for urban exploration and daily commuting. Its upright riding position, smooth-rolling tires, and practical features make it ideal for navigating city streets with ease and elegance.",
-      features: [
-        "Step-through frame design",
-        "7-speed internal hub gears",
-        "Front basket included",
-        "Integrated LED lights",
-        "Comfortable gel saddle",
-        "Full fenders and chain guard",
-      ],
+        "The Bajaj Pulsar NS200 is a performance-oriented motorcycle designed for thrill-seekers. With its aggressive styling and powerful engine, it offers an exhilarating riding experience on Indian roads.",
       specifications: {
-        frame: "Steel frame",
-        fork: "Rigid steel fork",
-        gears: "Shimano Nexus 7-speed",
-        brakes: "V-brakes",
-        wheels: "700c with puncture protection",
-        weight: "14 kg",
+        engine: "199.5cc, Single Cylinder, Liquid Cooled",
+        power: "24.5 bhp @ 9750 rpm",
+        torque: "18.5 Nm @ 8000 rpm",
+        transmission: "6-Speed",
+        fuelCapacity: "12 liters",
+        weight: "156 kg",
+        seatHeight: "805 mm",
+        suspension: "Telescopic front, Monoshock rear",
+        brakes: "Disc front and rear",
       },
     },
     {
       id: 3,
-      name: "Road Master Elite",
-      category: "Road Bike",
-      price: 30,
+      name: "KTM Duke 390",
+      category: "Sports",
+      price: 2000,
       rating: 4.9,
+      features: ["Aggressive Design", "Powerful Engine", "Advanced ABS", "LED Lights"],
       image:
-        "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1615172282427-9a57ef2d142e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       description:
-        "The Road Master Elite is a high-performance road bike designed for speed enthusiasts and serious cyclists. Its aerodynamic design, lightweight carbon frame, and precision components deliver an exceptional riding experience on paved roads and smooth surfaces.",
-      features: [
-        "Full carbon fiber frame",
-        "Carbon fork with tapered steerer",
-        "22-speed Shimano Ultegra groupset",
-        "Hydraulic disc brakes",
-        "Aero carbon wheelset",
-        "Internal cable routing",
-      ],
+        "The KTM Duke 390 is a high-performance naked motorcycle that delivers exceptional power and handling. Its lightweight chassis and powerful engine make it ideal for both city riding and highway cruising in India.",
       specifications: {
-        frame: "Carbon Fiber",
-        fork: "Carbon Fiber",
-        gears: "Shimano Ultegra, 22-speed",
-        brakes: "Shimano Ultegra Hydraulic Disc",
-        wheels: "Carbon clincher, 700c",
-        weight: "8.2 kg",
+        engine: "373.2cc, Single Cylinder, Liquid Cooled",
+        power: "43 bhp @ 9000 rpm",
+        torque: "37 Nm @ 7000 rpm",
+        transmission: "6-Speed",
+        fuelCapacity: "13.4 liters",
+        weight: "167 kg",
+        seatHeight: "830 mm",
+        suspension: "WP USD front, WP Monoshock rear",
+        brakes: "Disc front and rear with ABS",
       },
     },
     {
       id: 4,
-      name: "Electric Glide 3000",
-      category: "Electric Bike",
-      price: 35,
+      name: "TVS Apache RR 310",
+      category: "Sports",
+      price: 1800,
       rating: 4.7,
+      features: ["Racing Design", "Powerful Engine", "Dual Channel ABS", "Slipper Clutch"],
       image:
-        "https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       description:
-        "The Electric Glide 3000 is a premium electric bike that combines power, comfort, and style. With its powerful motor, long-lasting battery, and thoughtful design, this e-bike makes cycling effortless and enjoyable, whether you're commuting, touring, or just riding for pleasure.",
-      features: [
-        "500W brushless hub motor",
-        "Removable 48V 14Ah battery",
-        "Range of up to 80 miles",
-        "Integrated LCD display",
-        "5 levels of pedal assist",
-        "Front suspension fork",
-      ],
+        "The TVS Apache RR 310 is a fully-faired sports motorcycle with track-inspired design and performance. Its aerodynamic styling and advanced features make it a favorite among Indian sport bike enthusiasts.",
       specifications: {
-        frame: "Aluminum Alloy",
-        fork: "Suspension fork with lockout",
-        gears: "Shimano 8-speed",
-        brakes: "Hydraulic disc brakes",
-        wheels: "27.5-inch with puncture protection",
-        weight: "22 kg (including battery)",
+        engine: "312.2cc, Single Cylinder, Liquid Cooled",
+        power: "34 bhp @ 9700 rpm",
+        torque: "27.3 Nm @ 7700 rpm",
+        transmission: "6-Speed",
+        fuelCapacity: "11 liters",
+        weight: "174 kg",
+        seatHeight: "810 mm",
+        suspension: "USD front, Monoshock rear",
+        brakes: "Disc front and rear with dual-channel ABS",
+      },
+    },
+    {
+      id: 5,
+      name: "Honda CB350",
+      category: "Cruiser",
+      price: 1400,
+      rating: 4.5,
+      features: ["Retro Design", "Smooth Engine", "LED Lights", "Digital-Analog Console"],
+      image:
+        "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      description:
+        "The Honda CB350 is a modern classic motorcycle with a retro design and refined performance. Its smooth engine and comfortable riding position make it perfect for cruising through the streets of Indian cities.",
+      specifications: {
+        engine: "348.36cc, Single Cylinder, Air Cooled",
+        power: "21 bhp @ 5500 rpm",
+        torque: "30 Nm @ 3000 rpm",
+        transmission: "5-Speed",
+        fuelCapacity: "15 liters",
+        weight: "181 kg",
+        seatHeight: "800 mm",
+        suspension: "Telescopic front, Twin shock absorbers rear",
+        brakes: "Disc front and rear with dual-channel ABS",
+      },
+    },
+    {
+      id: 6,
+      name: "Yamaha MT-15",
+      category: "Naked",
+      price: 1300,
+      rating: 4.4,
+      features: ["Aggressive Styling", "Powerful Engine", "LED Headlamp", "Digital Console"],
+      image:
+        "https://images.unsplash.com/photo-1611241443322-78b19f75ea6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      description:
+        "The Yamaha MT-15 is a naked streetfighter with aggressive styling and nimble handling. Its compact size and responsive engine make it perfect for navigating through congested Indian city traffic.",
+      specifications: {
+        engine: "155cc, Single Cylinder, Liquid Cooled",
+        power: "18.5 bhp @ 10000 rpm",
+        torque: "13.9 Nm @ 8500 rpm",
+        transmission: "6-Speed",
+        fuelCapacity: "10 liters",
+        weight: "138 kg",
+        seatHeight: "810 mm",
+        suspension: "Telescopic front, Monoshock rear",
+        brakes: "Disc front and rear with single-channel ABS",
+      },
+    },
+    {
+      id: 7,
+      name: "Suzuki Gixxer SF",
+      category: "Sports",
+      price: 1250,
+      rating: 4.3,
+      features: ["Sporty Design", "Smooth Engine", "LED Lights", "Split Seats"],
+      image:
+        "https://images.unsplash.com/photo-1622185135505-2d795003994a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      description:
+        "The Suzuki Gixxer SF is a fully-faired sports motorcycle with a sleek design and balanced performance. It offers a comfortable riding position while maintaining sporty characteristics for Indian roads.",
+      specifications: {
+        engine: "155cc, Single Cylinder, Air Cooled",
+        power: "13.6 bhp @ 8000 rpm",
+        torque: "13.8 Nm @ 6000 rpm",
+        transmission: "5-Speed",
+        fuelCapacity: "12 liters",
+        weight: "148 kg",
+        seatHeight: "795 mm",
+        suspension: "Telescopic front, Monoshock rear",
+        brakes: "Disc front and rear with ABS",
+      },
+    },
+    {
+      id: 8,
+      name: "Royal Enfield Himalayan",
+      category: "Adventure",
+      price: 1600,
+      rating: 4.7,
+      features: ["Off-Road Capability", "Long Travel Suspension", "Luggage Mounts", "Digital Compass"],
+      image:
+        "https://images.unsplash.com/photo-1604357209793-fca5dca89f97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      description:
+        "The Royal Enfield Himalayan is a purpose-built adventure motorcycle designed to tackle the challenging terrains of India. From the Himalayan mountains to the coastal roads, this motorcycle is built for adventure.",
+      specifications: {
+        engine: "411cc, Single Cylinder, Air Cooled",
+        power: "24.3 bhp @ 6500 rpm",
+        torque: "32 Nm @ 4250 rpm",
+        transmission: "5-Speed",
+        fuelCapacity: "15 liters",
+        weight: "199 kg",
+        seatHeight: "800 mm",
+        suspension: "Telescopic front, Monoshock rear",
+        brakes: "Disc front and rear with dual-channel ABS",
       },
     },
   ]
@@ -229,19 +306,20 @@ export default function ProductDetail() {
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold">{bike.name}</h1>
                 <p className="text-2xl font-bold text-primary mt-2">
-                  ${bike.price}
+                  ₹{bike.price}
                   <span className="text-sm font-normal text-gray-600">/day</span>
                 </p>
               </div>
 
-              <p className="text-gray-700">{bike.description}</p>
+              <h2 className="text-2xl font-bold mb-4">About the {bike.name}</h2>
+              <p className="text-gray-700 mb-6">{bike.description}</p>
 
               <div className="space-y-4">
                 <h3 className="text-lg font-bold">Key Features</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {bike.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
-                      <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -289,15 +367,15 @@ export default function ProductDetail() {
                     <span>
                       Bike Rental ({rentalDuration} {rentalDuration === 1 ? "day" : "days"})
                     </span>
-                    <span>${(bike.price * rentalDuration).toFixed(2)}</span>
+                    <span>₹{(bike.price * rentalDuration).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between mb-2">
                     <span>Insurance</span>
-                    <span>$5.00</span>
+                    <span>₹5.00</span>
                   </div>
                   <div className="flex justify-between font-bold text-lg pt-2 border-t">
                     <span>Total</span>
-                    <span>${(bike.price * rentalDuration + 5).toFixed(2)}</span>
+                    <span>₹{(bike.price * rentalDuration + 5).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -311,7 +389,7 @@ export default function ProductDetail() {
 
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex items-center">
-                  <Calendar className="h-5 w-5 text-primary mr-2" />
+                  <CalendarIcon className="h-5 w-5 text-primary mr-2" />
                   <span className="text-sm">Free cancellation up to 24h before</span>
                 </div>
                 <div className="flex items-center">
@@ -332,68 +410,172 @@ export default function ProductDetail() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-6">Specifications</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {Object.entries(bike.specifications).map(([key, value]) => (
-              <div key={key} className="bg-white p-4 rounded-lg shadow-sm">
-                <h3 className="font-medium text-gray-500 mb-1 capitalize">{key}</h3>
-                <p className="font-semibold">{value}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="flex items-start">
+              <Bike className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Engine</p>
+                <p className="text-gray-600">{bike.specifications.engine}</p>
               </div>
-            ))}
+            </div>
+            <div className="flex items-start">
+              <Zap className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Power</p>
+                <p className="text-gray-600">{bike.specifications.power}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <RotateCw className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Torque</p>
+                <p className="text-gray-600">{bike.specifications.torque}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Cog className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Transmission</p>
+                <p className="text-gray-600">{bike.specifications.transmission}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Droplet className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Fuel Capacity</p>
+                <p className="text-gray-600">{bike.specifications.fuelCapacity}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Weight className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Weight</p>
+                <p className="text-gray-600">{bike.specifications.weight}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Ruler className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Seat Height</p>
+                <p className="text-gray-600">{bike.specifications.seatHeight}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Activity className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Suspension</p>
+                <p className="text-gray-600">{bike.specifications.suspension}</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Disc className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Brakes</p>
+                <p className="text-gray-600">{bike.specifications.brakes}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Related Bikes */}
-      <section className="py-12 md:py-16">
+      {/* Features */}
+      <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6">Similar Bikes You Might Like</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {relatedBikes.map((relatedBike) => (
-              <motion.div
-                key={relatedBike.id}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-              >
-                <Link href={`/products/${relatedBike.id}`}>
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={relatedBike.image || "/placeholder.svg"}
-                      alt={relatedBike.name}
-                      fill
-                      className="object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                    <div className="absolute top-2 right-2 bg-primary text-black text-sm font-bold px-2 py-1 rounded">
-                      ${relatedBike.price}/day
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <div className="flex justify-between items-start mb-1">
-                      <h3 className="text-lg font-bold">{relatedBike.name}</h3>
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 text-primary mr-1" />
-                        <span className="text-sm font-medium">{relatedBike.rating}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 text-sm mb-4">{relatedBike.category}</p>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-black">View Details</Button>
-                  </div>
-                </Link>
-              </motion.div>
+          <h2 className="text-2xl font-bold mb-6">Features</h2>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+            {bike.features.map((feature, index) => (
+              <li key={index} className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
+                <span className="text-gray-700">{feature}</span>
+              </li>
             ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Rental Information */}
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-6">Rental Information</h2>
+          <div className="space-y-4 mb-6">
+            <div className="flex items-start">
+              <CalendarIcon className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Minimum Rental Period</p>
+                <p className="text-gray-600">1 day</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <CreditCard className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Security Deposit</p>
+                <p className="text-gray-600">₹5,000 (refundable)</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FileText className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Required Documents</p>
+                <p className="text-gray-600">Valid Driving License, Aadhar Card, and Security Deposit</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Shield className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Insurance</p>
+                <p className="text-gray-600">Included in rental price</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Recommended For */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-6">Recommended For</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="flex items-start">
+              <Map className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Road Trips</p>
+                <p className="text-gray-600">Perfect for exploring the scenic routes of India</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <MapPin className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">City Exploration</p>
+                <p className="text-gray-600">Navigate through busy Indian city streets with ease</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Mountain className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Adventure Riding</p>
+                <p className="text-gray-600">Take on challenging terrains across India</p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Users className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">Group Rides</p>
+                <p className="text-gray-600">Enjoy the camaraderie of group motorcycle tours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
       <section className="py-12 md:py-16 bg-primary">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-black mb-2">Need Help Choosing?</h2>
-              <p className="text-black/80">Our team is here to help you find the perfect bike for your adventure.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-black mb-2">Ready to Ride?</h2>
+              <p className="text-lg text-black/80 mb-8">
+                Book this motorcycle today and start your Indian adventure on two wheels.
+              </p>
             </div>
             <div className="flex gap-4">
               <Link href="/contact">
@@ -411,4 +593,3 @@ export default function ProductDetail() {
     </div>
   )
 }
-

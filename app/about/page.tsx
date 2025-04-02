@@ -28,39 +28,39 @@ export default function About() {
 
   const teamMembers = [
     {
-      name: "Alex Johnson",
+      name: "Vikram Singh",
       role: "CEO & Founder",
       image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
-      bio: "With over 15 years of experience in the cycling industry, Alex leads our company vision and strategy.",
+      bio: "With over 15 years of experience in the motorcycle industry, Vikram leads our company vision and strategy.",
     },
     {
-      name: "Samantha Lee",
+      name: "Priya Desai",
       role: "Operations Manager",
       image:
         "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
-      bio: "Samantha oversees our rental operations and ensures every bike is maintained to the highest standards.",
+      bio: "Priya oversees our rental operations and ensures every motorcycle is maintained to the highest standards.",
     },
     {
-      name: "David Chen",
+      name: "Arjun Mehta",
       role: "Fleet Manager",
       image:
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
-      bio: "David manages our bike fleet and ensures all bikes are in perfect condition for our customers.",
+      bio: "Arjun manages our motorcycle fleet and ensures all bikes are in perfect condition for our customers.",
     },
     {
-      name: "Maria Rodriguez",
+      name: "Neha Sharma",
       role: "Customer Experience Manager",
       image:
         "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
-      bio: "Maria ensures every customer has an exceptional experience from booking to return.",
+      bio: "Neha ensures every customer has an exceptional experience from booking to return.",
     },
   ]
 
   const stats = [
-    { value: "10+", label: "Years of Experience", icon: <Clock className="h-8 w-8 text-primary" /> },
-    { value: "500+", label: "Premium Bikes", icon: <Bike className="h-8 w-8 text-primary" /> },
-    { value: "25+", label: "Team Members", icon: <Users className="h-8 w-8 text-primary" /> },
-    { value: "10k+", label: "Happy Customers", icon: <Award className="h-8 w-8 text-primary" /> },
+    { value: "8+", label: "Years of Experience", icon: <Clock className="h-8 w-8 text-primary" /> },
+    { value: "300+", label: "Premium Motorcycles", icon: <Bike className="h-8 w-8 text-primary" /> },
+    { value: "20+", label: "Team Members", icon: <Users className="h-8 w-8 text-primary" /> },
+    { value: "5k+", label: "Happy Customers", icon: <Award className="h-8 w-8 text-primary" /> },
   ]
 
   return (
@@ -72,8 +72,8 @@ export default function About() {
             <motion.div initial="hidden" animate="visible" variants={fadeIn} className="space-y-6">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">About BikeRent</h1>
               <p className="text-lg text-gray-600">
-                We're passionate about cycling and committed to providing the best bike rental experience for our
-                customers.
+                We're passionate about motorcycles and committed to providing the best motorcycle rental experience for our
+                customers across India.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/contact">
@@ -81,7 +81,7 @@ export default function About() {
                 </Link>
                 <Link href="/products">
                   <Button variant="outline" className="font-medium">
-                    Our Bikes <ArrowRight className="ml-2 h-4 w-4" />
+                    Our Motorcycles <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
@@ -94,7 +94,7 @@ export default function About() {
               className="relative"
             >
               <Image
-                src="/white car top view.svg"
+                src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                 alt="About BikeRent"
                 width={600}
                 height={500}
@@ -119,7 +119,7 @@ export default function About() {
             >
               <Image
                 src="https://images.unsplash.com/photo-1517649763962-0c623066013b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                alt="Our bike rental shop"
+                alt="Our motorcycle rental shop"
                 width={600}
                 height={450}
                 className="rounded-lg shadow-lg"
@@ -137,18 +137,18 @@ export default function About() {
                 Our Story
               </motion.h2>
               <motion.p variants={fadeIn} className="text-lg text-gray-600">
-                Founded in 2013, BikeRent began with a simple mission: to share our passion for cycling and make quality
-                bikes accessible to everyone. What started as a small shop with just 10 bikes has grown into a premier
-                bike rental service.
+                Founded in 2015, BikeRent began with a simple mission: to share our passion for motorcycles and make quality
+                bikes accessible to everyone across India. What started as a small shop in Mumbai with just 5 motorcycles has grown into a premier
+                motorcycle rental service.
               </motion.p>
               <motion.p variants={fadeIn} className="text-lg text-gray-600">
-                Over the years, we've helped thousands of customers explore cities, conquer mountains, and enjoy the
-                freedom that comes with cycling. Our commitment to quality, safety, and customer satisfaction has made
-                us the preferred choice for bike rentals.
+                Over the years, we've helped thousands of customers explore the diverse landscapes of India, from the beaches of Goa to the mountains of Ladakh, and enjoy the
+                freedom that comes with motorcycling. Our commitment to quality, safety, and customer satisfaction has made
+                us the preferred choice for motorcycle rentals.
               </motion.p>
               <motion.p variants={fadeIn} className="text-lg text-gray-600">
-                Today, we continue to expand our fleet with the latest models and technologies, ensuring our customers
-                always have access to the best bikes for their adventures.
+                Today, we continue to expand our fleet with the latest models from Royal Enfield, Bajaj, KTM, and other top Indian and international brands, ensuring our customers
+                always have access to the best motorcycles for their adventures.
               </motion.p>
             </motion.div>
           </div>
@@ -210,15 +210,15 @@ export default function About() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
               <p className="text-gray-600">
-                To provide high-quality bike rentals that enable people to explore, exercise, and enjoy the freedom of
-                cycling in a safe and sustainable way.
+                To provide high-quality motorcycle rentals that enable people to explore India, exercise, and enjoy the freedom of
+                motorcycling in a safe and sustainable way.
               </p>
               <ul className="mt-6 space-y-2">
                 {[
-                  "Provide well-maintained, premium bikes",
+                  "Provide well-maintained, premium motorcycles",
                   "Ensure exceptional customer service",
-                  "Promote cycling as a sustainable mode of transportation",
-                  "Make cycling accessible to everyone",
+                  "Promote motorcycling as a thrilling mode of transportation",
+                  "Make motorcycle touring accessible to everyone",
                 ].map((item, index) => (
                   <li key={index} className="flex items-start">
                     <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
@@ -240,15 +240,15 @@ export default function About() {
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
               <p className="text-gray-600">
-                To be the leading bike rental service known for quality, reliability, and exceptional customer
-                experiences, inspiring more people to embrace cycling.
+                To be the leading motorcycle rental service in India known for quality, reliability, and exceptional customer
+                experiences, inspiring more people to embrace motorcycling.
               </p>
               <ul className="mt-6 space-y-2">
                 {[
-                  "Expand our presence to more locations",
+                  "Expand our presence to more locations across India",
                   "Continuously update our fleet with the latest models",
                   "Implement eco-friendly practices",
-                  "Build a community of cycling enthusiasts",
+                  "Build a community of motorcycle enthusiasts",
                 ].map((item, index) => (
                   <li key={index} className="flex items-start">
                     <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
@@ -317,12 +317,12 @@ export default function About() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready to Start Your Adventure?</h2>
             <p className="text-lg text-black/80 mb-8">
-              Browse our selection of premium bikes and book your rental today.
+              Browse our selection of premium Indian motorcycles and book your rental today.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/products">
                 <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
-                  Browse Bikes
+                  Browse Motorcycles
                 </Button>
               </Link>
               <Link href="/contact">
@@ -340,4 +340,3 @@ export default function About() {
     </div>
   )
 }
-

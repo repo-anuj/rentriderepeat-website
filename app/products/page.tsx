@@ -10,7 +10,7 @@ import { Search, Filter, Star, Bike, ChevronDown } from "lucide-react"
 
 export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100])
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000])
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -34,89 +34,97 @@ export default function Products() {
   const bikes = [
     {
       id: 1,
-      name: "Mountain Explorer Pro",
-      category: "Mountain Bike",
-      price: 25,
+      name: "Royal Enfield Classic 350",
+      category: "Cruiser",
+      price: 1500,
       rating: 4.8,
+      features: ["Comfortable Seat", "Powerful Engine", "Vintage Design", "Fuel Efficient"],
       image:
-        "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Perfect for off-road adventures and mountain trails.",
+        "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 2,
-      name: "City Cruiser Deluxe",
-      category: "City Bike",
-      price: 18,
+      name: "Bajaj Pulsar NS200",
+      category: "Sports",
+      price: 1200,
       rating: 4.6,
+      features: ["Sporty Design", "Powerful Engine", "Disc Brakes", "Digital Console"],
       image:
-        "https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Comfortable and stylish for city exploration.",
+        "https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 3,
-      name: "Road Master Elite",
-      category: "Road Bike",
-      price: 30,
+      name: "KTM Duke 390",
+      category: "Sports",
+      price: 2000,
       rating: 4.9,
+      features: ["Aggressive Design", "Powerful Engine", "Advanced ABS", "LED Lights"],
       image:
-        "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "High-performance road bike for speed enthusiasts.",
+        "https://images.unsplash.com/photo-1615172282427-9a57ef2d142e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 4,
-      name: "Electric Glide 3000",
-      category: "Electric Bike",
-      price: 35,
+      name: "TVS Apache RR 310",
+      category: "Sports",
+      price: 1800,
       rating: 4.7,
+      features: ["Racing Design", "Powerful Engine", "Dual Channel ABS", "Slipper Clutch"],
       image:
-        "https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Effortless riding with electric assistance.",
+        "https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 5,
-      name: "Urban Commuter Pro",
-      category: "City Bike",
-      price: 20,
+      name: "Honda CB350",
+      category: "Cruiser",
+      price: 1400,
       rating: 4.5,
+      features: ["Retro Design", "Smooth Engine", "LED Lights", "Digital-Analog Console"],
       image:
-        "https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Ideal for daily commuting in urban environments.",
+        "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 6,
-      name: "Trail Blazer X1",
-      category: "Mountain Bike",
-      price: 28,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1544701758-5241eb611a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Conquer any trail with this rugged mountain bike.",
+      name: "Yamaha MT-15",
+      category: "Naked",
+      price: 1300,
+      rating: 4.4,
+      features: ["Aggressive Styling", "Powerful Engine", "LED Headlamp", "Digital Console"],
+      image:
+        "https://images.unsplash.com/photo-1611241443322-78b19f75ea6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 7,
-      name: "Speed Demon Racing",
-      category: "Road Bike",
-      price: 32,
-      rating: 4.8,
+      name: "Suzuki Gixxer SF",
+      category: "Sports",
+      price: 1250,
+      rating: 4.3,
+      features: ["Sporty Design", "Smooth Engine", "LED Lights", "Split Seats"],
       image:
-        "https://images.unsplash.com/photo-1511994298241-608e28f14fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Professional-grade racing bike for serious cyclists.",
+        "https://images.unsplash.com/photo-1622185135505-2d795003994a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 8,
-      name: "E-Rider Comfort Plus",
-      category: "Electric Bike",
-      price: 40,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      description: "Comfortable electric bike with extended battery life.",
+      name: "Royal Enfield Himalayan",
+      category: "Adventure",
+      price: 1600,
+      rating: 4.7,
+      features: ["Off-Road Capability", "Long Travel Suspension", "Luggage Mounts", "Digital Compass"],
+      image:
+        "https://images.unsplash.com/photo-1604357209793-fca5dca89f97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
   ]
 
-  const categories = ["All", "Mountain Bike", "Road Bike", "City Bike", "Electric Bike"]
+  const categories = [
+    { name: "All", value: "all" },
+    { name: "Cruiser", value: "cruiser" },
+    { name: "Sports", value: "sports" },
+    { name: "Naked", value: "naked" },
+    { name: "Adventure", value: "adventure" },
+  ]
 
   const filteredBikes = bikes.filter(
     (bike) =>
-      (!selectedCategory || selectedCategory === "All" || bike.category === selectedCategory) &&
+      (!selectedCategory || selectedCategory === "all" || bike.category === selectedCategory) &&
       bike.price >= priceRange[0] &&
       bike.price <= priceRange[1],
   )
@@ -127,10 +135,12 @@ export default function Products() {
       <section className="py-12 md:py-16 bg-gradient-to-r from-gray-50 to-gray-100">
         <div className="container mx-auto px-4">
           <motion.div initial="hidden" animate="visible" variants={fadeIn} className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl text-black font-bold mb-4">Our Bike Collection</h1>
-            <p className="text-lg text-gray-600 mb-8">Browse our selection of premium bikes for your next adventure</p>
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">Our Motorcycles</h1>
+            <p className="text-lg text-gray-600">
+              Explore our wide selection of premium Indian motorcycles for rent
+            </p>
             <div className="relative max-w-xl mx-auto">
-              <Input type="text" placeholder="Search for bikes..." className="w-full pr-10 py-6 text-lg" />
+              <Input type="text" placeholder="Search for motorcycles..." className="w-full pr-10 py-6 text-lg" />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
@@ -161,17 +171,17 @@ export default function Products() {
                     <h4 className="font-medium mb-3">Bike Type</h4>
                     <div className="space-y-2">
                       {categories.map((category) => (
-                        <div key={category} className="flex items-center">
+                        <div key={category.value} className="flex items-center">
                           <input
                             type="radio"
-                            id={category}
+                            id={category.value}
                             name="category"
-                            checked={selectedCategory === category}
-                            onChange={() => setSelectedCategory(category)}
+                            checked={selectedCategory === category.value}
+                            onChange={() => setSelectedCategory(category.value)}
                             className="h-4 w-4 text-primary focus:ring-primary"
                           />
-                          <label htmlFor={category} className="ml-2 text-gray-700">
-                            {category}
+                          <label htmlFor={category.value} className="ml-2 text-gray-700">
+                            {category.name}
                           </label>
                         </div>
                       ))}
@@ -180,16 +190,16 @@ export default function Products() {
 
                   {/* Price Range */}
                   <div>
-                    <h4 className="font-medium mb-3">Price Range ($/day)</h4>
+                    <h4 className="font-medium mb-3">Price Range (₹/day)</h4>
                     <div className="space-y-4">
                       <div className="flex justify-between text-sm">
-                        <span>${priceRange[0]}</span>
-                        <span>${priceRange[1]}</span>
+                        <span>₹{priceRange[0]}</span>
+                        <span>₹{priceRange[1]}</span>
                       </div>
                       <input
                         type="range"
                         min="0"
-                        max="100"
+                        max="2000"
                         value={priceRange[1]}
                         onChange={(e) => setPriceRange([priceRange[0], Number.parseInt(e.target.value)])}
                         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
@@ -217,7 +227,7 @@ export default function Products() {
               <div className="bg-primary/10 p-6 rounded-lg border border-primary/20">
                 <h3 className="text-lg font-bold mb-2">Need Help?</h3>
                 <p className="text-gray-700 mb-4">
-                  Our team is here to help you find the perfect bike for your adventure.
+                  Our team is here to help you find the perfect motorcycle for your adventure.
                 </p>
                 <Link href="/contact">
                   <Button
@@ -233,7 +243,7 @@ export default function Products() {
             {/* Products Grid */}
             <div className="lg:w-3/4">
               <div className="flex justify-between items-center mb-6">
-                <p className="text-gray-600">{filteredBikes.length} bikes found</p>
+                <p className="text-gray-600">{filteredBikes.length} motorcycles found</p>
                 <div className="flex items-center">
                   <span className="mr-2 text-gray-700">Sort by:</span>
                   <div className="relative">
@@ -269,7 +279,7 @@ export default function Products() {
                           className="object-cover transition-transform duration-300 hover:scale-105"
                         />
                         <div className="absolute top-2 right-2 bg-primary text-black text-sm font-bold px-2 py-1 rounded">
-                          ${bike.price}/day
+                          ₹{bike.price}/day
                         </div>
                       </div>
                       <div className="p-4">
@@ -280,8 +290,8 @@ export default function Products() {
                             <span className="text-sm font-medium">{bike.rating}</span>
                           </div>
                         </div>
-                        <p className="text-gray-600 text-sm mb-2">{bike.category}</p>
-                        <p className="text-gray-700 text-sm mb-4">{bike.description}</p>
+                        <p className="text-gray-600 mb-4">{bike.category}</p>
+                        <p className="text-gray-700 text-sm mb-4">{bike.features.join(", ")}</p>
                         <Button className="w-full bg-primary hover:bg-primary/90 text-black">View Details</Button>
                       </div>
                     </Link>
@@ -292,12 +302,12 @@ export default function Products() {
               {filteredBikes.length === 0 && (
                 <div className="text-center py-12">
                   <Bike className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">No bikes found</h3>
+                  <h3 className="text-xl font-bold mb-2">No motorcycles found</h3>
                   <p className="text-gray-600 mb-6">Try adjusting your filters to find what you're looking for.</p>
                   <Button
                     onClick={() => {
                       setSelectedCategory(null)
-                      setPriceRange([0, 100])
+                      setPriceRange([0, 2000])
                     }}
                     className="bg-primary hover:bg-primary/90 text-black"
                   >
@@ -320,8 +330,10 @@ export default function Products() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready to Start Your Adventure?</h2>
-            <p className="text-lg text-black/80 mb-8">Book your bike today and explore the world on two wheels.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Can't Find What You're Looking For?</h2>
+            <p className="text-lg text-black/80 mb-8">
+              Contact us with your specific motorcycle requirements and we'll help you find the perfect ride.
+            </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/login">
                 <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
@@ -343,4 +355,3 @@ export default function Products() {
     </div>
   )
 }
-

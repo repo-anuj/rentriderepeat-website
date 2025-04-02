@@ -29,13 +29,13 @@ export default function Home() {
   const features = [
     {
       icon: <Bike className="h-10 w-10 text-primary" />,
-      title: "Premium Bikes",
-      description: "High-quality bikes for all terrains and preferences.",
+      title: "Premium Motorcycles",
+      description: "High-quality Indian motorcycles for all terrains and preferences.",
     },
     {
       icon: <Shield className="h-10 w-10 text-primary" />,
       title: "Safety Guaranteed",
-      description: "All bikes are regularly maintained and safety-checked.",
+      description: "All motorcycles are regularly maintained and safety-checked.",
     },
     {
       icon: <Clock className="h-10 w-10 text-primary" />,
@@ -45,73 +45,73 @@ export default function Home() {
     {
       icon: <MapPin className="h-10 w-10 text-primary" />,
       title: "Multiple Locations",
-      description: "Convenient pickup and drop-off points across the city.",
+      description: "Convenient pickup and drop-off points across India.",
     },
   ]
 
   const popularBikes = [
     {
       id: 1,
-      name: "Mountain Explorer Pro",
-      category: "Mountain Bike",
-      price: 25,
+      name: "Royal Enfield Classic 350",
+      category: "Cruiser",
+      price: 1500,
       rating: 4.8,
       image:
-        "https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 2,
-      name: "City Cruiser Deluxe",
-      category: "City Bike",
-      price: 18,
+      name: "Bajaj Pulsar NS200",
+      category: "Sports",
+      price: 1200,
       rating: 4.6,
       image:
-        "https://images.unsplash.com/photo-1485965120184-e220f721d03e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 3,
-      name: "Road Master Elite",
-      category: "Road Bike",
-      price: 30,
+      name: "KTM Duke 390",
+      category: "Sports",
+      price: 2000,
       rating: 4.9,
       image:
-        "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1615172282427-9a57ef2d142e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
     {
       id: 4,
-      name: "Electric Glide 3000",
-      category: "Electric Bike",
-      price: 35,
+      name: "TVS Apache RR 310",
+      category: "Sports",
+      price: 1800,
       rating: 4.7,
       image:
-        "https://images.unsplash.com/photo-1571068316344-75bc76f77890?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     },
   ]
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      location: "New York",
+      name: "Rajesh Kumar",
+      location: "Mumbai",
       image:
         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
       quote:
-        "BikeRent made our family vacation so much more enjoyable. The bikes were in excellent condition and the service was outstanding.",
+        "BikeRent made our family vacation in Goa so much more enjoyable. The motorcycles were in excellent condition and the service was outstanding.",
     },
     {
-      name: "Michael Chen",
-      location: "San Francisco",
+      name: "Amit Patel",
+      location: "Delhi",
       image:
         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
       quote:
-        "As a cycling enthusiast, I appreciate the quality of bikes they offer. The rental process was smooth and hassle-free.",
+        "As a motorcycle enthusiast, I appreciate the quality of motorcycles they offer. The rental process was smooth and hassle-free.",
     },
     {
-      name: "Emily Rodriguez",
-      location: "Chicago",
+      name: "Priya Sharma",
+      location: "Bangalore",
       image:
         "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80",
       quote:
-        "I rented an electric bike for a week and it was the perfect way to explore the city. Will definitely use BikeRent again!",
+        "I rented a Royal Enfield for a week-long trip to Ladakh and it was the perfect companion for the journey. Will definitely use BikeRent again!",
     },
   ]
 
@@ -123,16 +123,16 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div initial="hidden" animate="visible" variants={fadeIn} className="space-y-6">
               <h1 className="text-4xl md:text-5xl text-black lg:text-6xl font-bold leading-tight">
-                Explore the World on Two Wheels
+                Explore India on Two Wheels
               </h1>
               <p className="text-lg text-gray-600 md:pr-10">
-                Premium bike rentals for every adventure. Choose from our wide selection of high-quality bikes and start
+                Premium motorcycle rentals for every adventure. Choose from our wide selection of high-quality Indian motorcycles and start
                 your journey today.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/products">
                   <Button className="bg-primary hover:bg-primary/90 text-black font-medium px-8 py-6 text-lg h-auto">
-                    Browse Bikes
+                    Browse Motorcycles
                   </Button>
                 </Link>
                 <Link href="/login">
@@ -150,8 +150,8 @@ export default function Home() {
               className="relative"
             >
               <Image
-                src="https://images.unsplash.com/photo-1571333250630-f0230c320b6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                alt="Premium Bike Rental"
+                src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                alt="Premium Motorcycle Rental"
                 width={600}
                 height={500}
                 className="rounded-lg shadow-xl"
@@ -175,7 +175,7 @@ export default function Home() {
               Why Choose BikeRent
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              We offer the best bike rental experience with premium bikes and exceptional service.
+              We offer the best motorcycle rental experience with premium Indian motorcycles and exceptional service.
             </motion.p>
           </motion.div>
 
@@ -211,10 +211,10 @@ export default function Home() {
             className="text-center max-w-3xl mx-auto mb-16"
           >
             <motion.h2 variants={fadeIn} className="text-3xl text-black md:text-4xl font-bold mb-4">
-              Our Popular Bikes
+              Our Popular Motorcycles
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              Discover our most popular bikes for your next adventure
+              Discover our most popular motorcycles for your next adventure
             </motion.p>
           </motion.div>
 
@@ -251,7 +251,7 @@ export default function Home() {
                     <p className="text-gray-600 mb-4">{bike.category}</p>
                     <div className="flex justify-between items-center">
                       <p className="text-xl font-bold">
-                        ${bike.price}
+                        ₹{bike.price}
                         <span className="text-sm font-normal text-gray-600">/day</span>
                       </p>
                       <Button
@@ -277,7 +277,7 @@ export default function Home() {
           >
             <Link href="/products">
               <Button variant="outline" className="font-medium">
-                View All Bikes <ArrowRight className="ml-2 h-4 w-4" />
+                View All Motorcycles <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </motion.div>
@@ -297,7 +297,7 @@ export default function Home() {
               How It Works
             </motion.h2>
             <motion.p variants={fadeIn} className="text-lg text-gray-600">
-              Renting a bike with us is quick and easy
+              Renting a motorcycle with us is quick and easy
             </motion.p>
           </motion.div>
 
@@ -305,8 +305,8 @@ export default function Home() {
             {[
               {
                 icon: <Bike className="h-12 w-12 text-primary" />,
-                title: "Choose Your Bike",
-                description: "Browse our selection of premium bikes and choose the one that suits your needs.",
+                title: "Choose Your Motorcycle",
+                description: "Browse our selection of premium Indian motorcycles and choose the one that suits your needs.",
               },
               {
                 icon: <Calendar className="h-12 w-12 text-primary" />,
@@ -316,7 +316,7 @@ export default function Home() {
               {
                 icon: <MapPin className="h-12 w-12 text-primary" />,
                 title: "Enjoy Your Ride",
-                description: "Pick up your bike at the designated location and start your adventure.",
+                description: "Pick up your motorcycle at the designated location and start your adventure across India.",
               },
             ].map((step, index) => (
               <motion.div
@@ -407,11 +407,11 @@ export default function Home() {
             className="text-center max-w-3xl mx-auto"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Ready for Your Next Adventure?</h2>
-            <p className="text-lg text-black/80 mb-8">Book your bike today and explore the world on two wheels.</p>
+            <p className="text-lg text-black/80 mb-8">Book your motorcycle today and explore India on two wheels.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/products">
                 <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
-                  Browse Bikes
+                  Browse Motorcycles
                 </Button>
               </Link>
               <Link href="/login">
@@ -438,7 +438,7 @@ export default function Home() {
             className="text-center mb-12"
           >
             <h2 className="text-2xl text-black font-bold mb-2">Our Trusted Partners</h2>
-            <p className="text-gray-600">We work with the best brands in the cycling industry</p>
+            <p className="text-gray-600">We work with the best motorcycle brands in India</p>
           </motion.div>
 
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
@@ -451,9 +451,31 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
                 className="grayscale hover:grayscale-0 transition-all duration-300"
               >
-                <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
-                  <span className="text-gray-600 font-medium">Brand {i}</span>
-                </div>
+                {i === 1 && (
+                  <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">Royal Enfield</span>
+                  </div>
+                )}
+                {i === 2 && (
+                  <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">Bajaj</span>
+                  </div>
+                )}
+                {i === 3 && (
+                  <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">KTM</span>
+                  </div>
+                )}
+                {i === 4 && (
+                  <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">TVS</span>
+                  </div>
+                )}
+                {i === 5 && (
+                  <div className="h-12 w-32 bg-gray-300 rounded-md flex items-center justify-center">
+                    <span className="text-gray-600 font-medium">Honda</span>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
@@ -462,4 +484,3 @@ export default function Home() {
     </div>
   )
 }
-
