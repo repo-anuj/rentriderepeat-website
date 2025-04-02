@@ -7,6 +7,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { motion } from "framer-motion"
+import { Toaster, toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,20 +20,59 @@ export default function SignIn() {
   })
 
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    // Clear error when user types
+    if (error) setError("")
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      router.push("/products")
-    }, 1500)
+    try {
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Sign in failed')
+      }
+
+      // Store token and user data in localStorage
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
+      
+      if (data.vendor) {
+        localStorage.setItem('vendor', JSON.stringify(data.vendor))
+      }
+
+      // Show success message
+      toast.success('Sign in successful!')
+
+      // Redirect based on user role
+      setTimeout(() => {
+        if (data.user.role === 'vendor') {
+          router.push('/vendor-dashboard')
+        } else {
+          router.push('/products')
+        }
+      }, 1000)
+    } catch (error: any) {
+      console.error('Sign in error:', error)
+      setError(error.message || 'Invalid email or password')
+      setIsLoading(false)
+    }
   }
 
   const fadeIn = {
@@ -46,6 +86,7 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-white py-12">
+      <Toaster position="top-center" />
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Column - Illustration */}
@@ -79,6 +120,12 @@ export default function SignIn() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+
                 <Input
                   type="email"
                   name="email"
@@ -128,7 +175,11 @@ export default function SignIn() {
                 <p>
                   Don't have an account?{" "}
                   <Link href="/login" className="text-primary font-medium hover:underline">
-                    Register now
+                    Register as User
+                  </Link>
+                  {" or "}
+                  <Link href="/vendor-signup" className="text-primary font-medium hover:underline">
+                    Register as Vendor
                   </Link>
                 </p>
               </div>
@@ -138,4 +189,4 @@ export default function SignIn() {
       </div>
     </div>
   )
-} 
+}

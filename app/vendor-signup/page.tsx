@@ -8,6 +8,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, ChevronLeft, ChevronRight, AlertCircle, Store } from "lucide-react"
+import { Toaster, toast } from 'sonner'
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,8 @@ export default function VendorSignup() {
     name: "",
     email: "",
     mobile: "",
+    password: "",
+    confirmPassword: "",
     businessName: "",
     businessType: "",
     gstNumber: "",
@@ -69,6 +72,12 @@ export default function VendorSignup() {
     
     if (!formData.mobile.trim()) newErrors.mobile = "Mobile number is required"
     else if (!/^\d{10}$/.test(formData.mobile)) newErrors.mobile = "Enter a valid 10-digit mobile number"
+    
+    if (!formData.password.trim()) newErrors.password = "Password is required"
+    else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters"
+    
+    if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password"
+    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
     
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -120,12 +129,15 @@ export default function VendorSignup() {
     return Object.keys(newErrors).length === 0
   }
 
-  const validateFinalSubmission = () => {
+  const validateReview = () => {
+    const newErrors: Record<string, string> = {}
+    
     if (!formData.termsAccepted) {
-      setErrors({ termsAccepted: "You must accept the terms and conditions" })
-      return false
+      newErrors.termsAccepted = "You must accept the terms and conditions"
     }
-    return true
+    
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleNext = () => {
@@ -161,17 +173,47 @@ export default function VendorSignup() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!validateFinalSubmission()) return
+    if (!validateReview()) {
+      return
+    }
     
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      router.push("/products")
-    }, 1500)
+    
+    try {
+      const response = await fetch('/api/auth/register-vendor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        toast.success('Registration successful!')
+        
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+        }
+        
+        // Redirect to vendor dashboard after a short delay
+        setTimeout(() => {
+          router.push('/vendor-dashboard')
+        }, 1500)
+      } else {
+        toast.error(data.message || 'Registration failed. Please try again.')
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error('Error during registration:', error)
+      toast.error('An error occurred. Please try again later.')
+      setIsLoading(false)
+    }
   }
 
   const fadeIn = {
@@ -234,6 +276,31 @@ export default function VendorSignup() {
                 className={`w-full bg-white text-black ${errors.mobile ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.mobile && <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>}
+            </div>
+            
+            <div>
+              <Input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your Password"
+                className={`w-full bg-white text-black ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              <p className="text-xs text-gray-600 mt-1">Password must be at least 8 characters</p>
+            </div>
+
+            <div>
+              <Input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your Password"
+                className={`w-full bg-white text-black ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
             </div>
           </div>
         )
@@ -434,6 +501,7 @@ export default function VendorSignup() {
                   <p className="text-black"><span className="font-medium">Name:</span> {formData.name}</p>
                   <p className="text-black"><span className="font-medium">Email:</span> {formData.email}</p>
                   <p className="text-black"><span className="font-medium">Mobile:</span> {formData.mobile}</p>
+                  <p className="text-black"><span className="font-medium">Password:</span> ••••••••</p>
                 </div>
               </div>
               
@@ -499,6 +567,7 @@ export default function VendorSignup() {
 
   return (
     <div className="min-h-screen bg-white py-12">
+      <Toaster position="top-center" />
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Column - Illustration */}
@@ -553,7 +622,7 @@ export default function VendorSignup() {
               </div>
             </div>
 
-            <form onSubmit={stage === 'review' ? handleSubmit : (e) => e.preventDefault()} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stage}

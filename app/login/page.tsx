@@ -11,6 +11,7 @@ import { Check, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 type FormStage = 'personal' | 'contact' | 'documents' | 'review';
 
@@ -24,6 +25,8 @@ export default function Login() {
     mobile: "",
     alternatePhone: "",
     email: "",
+    password: "",
+    confirmPassword: "",
     location: "",
     address: "",
     aadharCard: "",
@@ -83,6 +86,12 @@ export default function Login() {
     
     if (!formData.email.trim()) newErrors.email = "Email is required"
     else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Enter a valid email address"
+    
+    if (!formData.password.trim()) newErrors.password = "Password is required"
+    else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters"
+    
+    if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password"
+    else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
     
     if (!formData.location.trim()) newErrors.location = "Location is required"
     
@@ -151,17 +160,61 @@ export default function Login() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!validateFinalSubmission()) return
     
     setIsLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      router.push("/products")
-    }, 1500)
+    try {
+      // Format data for API
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        dob: formData.dob,
+        gender: formData.gender,
+        mobile: formData.mobile,
+        alternatePhone: formData.alternatePhone || undefined,
+        location: formData.location,
+        address: formData.address,
+        aadharCard: formData.aadharCard,
+        drivingLicense: formData.drivingLicense,
+        emergencyContact: formData.emergencyContact
+      }
+
+      // API call to register user
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed')
+      }
+
+      // Show success message
+      toast.success('Registration successful! Welcome to BikeRent.')
+      
+      // Store token in localStorage if available
+      if (data.data?.token) {
+        localStorage.setItem('token', data.data.token)
+      }
+      
+      // Redirect to products page after a short delay
+      setTimeout(() => {
+        router.push("/products")
+      }, 1500)
+    } catch (error: any) {
+      toast.error(error.message || 'Something went wrong')
+      setIsLoading(false)
+    }
   }
 
   const fadeIn = {
@@ -297,6 +350,31 @@ export default function Login() {
 
             <div>
               <Input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter your Password"
+                className={`w-full bg-white text-black ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              <p className="text-xs text-gray-600 mt-1">Password must be at least 8 characters</p>
+            </div>
+
+            <div>
+              <Input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your Password"
+                className={`w-full bg-white text-black ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+            </div>
+
+            <div>
+              <Input
                 type="text"
                 name="location"
                 value={formData.location}
@@ -395,6 +473,7 @@ export default function Login() {
                   <p className="text-black"><span className="font-medium">Mobile:</span> {formData.mobile}</p>
                   {formData.alternatePhone && <p className="text-black"><span className="font-medium">Alternate Phone:</span> {formData.alternatePhone}</p>}
                   <p className="text-black"><span className="font-medium">Email:</span> {formData.email}</p>
+                  <p className="text-black"><span className="font-medium">Password:</span> ••••••••</p>
                   <p className="text-black"><span className="font-medium">City:</span> {formData.location}</p>
                   <p className="text-black"><span className="font-medium">Address:</span> {formData.address}</p>
                 </div>
@@ -564,4 +643,3 @@ export default function Login() {
     </div>
   )
 }
-

@@ -6,7 +6,20 @@ const Vendor = require('../models/Vendor');
 // @access  Public
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { 
+      name, 
+      email, 
+      password, 
+      dob,
+      gender,
+      mobile,
+      alternatePhone,
+      location,
+      address,
+      aadharCard,
+      drivingLicense,
+      emergencyContact
+    } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -23,7 +36,15 @@ exports.register = async (req, res, next) => {
       name,
       email,
       password,
-      phone,
+      dob,
+      gender,
+      phone: mobile, // Map mobile to phone in the schema
+      alternatePhone,
+      location,
+      address,
+      aadharCard,
+      drivingLicense,
+      emergencyContact
     });
 
     sendTokenResponse(user, 201, res);

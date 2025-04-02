@@ -25,17 +25,45 @@ const UserSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    dob: {
+      type: Date,
+      required: [true, 'Please provide a date of birth'],
+    },
+    gender: {
+      type: String,
+      required: [true, 'Please provide gender'],
+      enum: ['male', 'female', 'other'],
+    },
     phone: {
       type: String,
       required: [true, 'Please provide a phone number'],
       match: [/^[0-9]{10}$/, 'Please provide a valid phone number'],
     },
+    alternatePhone: {
+      type: String,
+      match: [/^[0-9]{10}$/, 'Please provide a valid phone number'],
+    },
+    location: {
+      type: String,
+      required: [true, 'Please provide your city'],
+    },
     address: {
-      street: String,
-      city: String,
-      state: String,
-      zipCode: String,
-      country: String,
+      type: String,
+      required: [true, 'Please provide your address'],
+    },
+    aadharCard: {
+      type: String,
+      required: [true, 'Please provide your Aadhar card number'],
+      match: [/^[0-9]{12}$/, 'Please provide a valid 12-digit Aadhar number'],
+    },
+    drivingLicense: {
+      type: String,
+      required: [true, 'Please provide your driving license number'],
+    },
+    emergencyContact: {
+      type: String,
+      required: [true, 'Please provide an emergency contact number'],
+      match: [/^[0-9]{10}$/, 'Please provide a valid phone number'],
     },
     role: {
       type: String,
@@ -80,4 +108,4 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', UserSchema); 
+module.exports = mongoose.model('User', UserSchema);
