@@ -13,7 +13,7 @@ import { Bike, Zap, RotateCw, Cog, Droplet, Weight, Ruler, Activity, Disc, Check
 export default function ProductDetail() {
   const params = useParams()
   const router = useRouter()
-  const id = Number(params.id)
+  const id = Number(params?.id)
 
   const [selectedDate, setSelectedDate] = useState<string>("")
   const [rentalDuration, setRentalDuration] = useState<number>(1)
