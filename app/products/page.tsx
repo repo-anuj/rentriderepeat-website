@@ -1,16 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion } from "framer-motion"
-import { Search, Filter, Star, Bike, ChevronDown } from "lucide-react"
+import { Search, Filter, Star, Bike, ChevronDown, Loader2, Check } from "lucide-react"
+
+interface BikeData {
+  id: string;
+  name: string;
+  category: string;
+  brand?: string;
+  model?: string;
+  price: number;
+  rating: number;
+  features: string[];
+  image?: string;
+  images?: Array<{url: string, caption?: string}>;
+  description?: string;
+}
 
 export default function Products() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000])
+  const [searchQuery, setSearchQuery] = useState("") 
+  const [bikes, setBikes] = useState<BikeData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -30,89 +48,41 @@ export default function Products() {
       },
     },
   }
-
-  const bikes = [
-    {
-      id: 1,
-      name: "Royal Enfield Classic 350",
-      category: "Cruiser",
-      price: 1500,
-      rating: 4.8,
-      features: ["Comfortable Seat", "Powerful Engine", "Vintage Design", "Fuel Efficient"],
-      image:
-        "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 2,
-      name: "Bajaj Pulsar NS200",
-      category: "Sports",
-      price: 1200,
-      rating: 4.6,
-      features: ["Sporty Design", "Powerful Engine", "Disc Brakes", "Digital Console"],
-      image:
-        "https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 3,
-      name: "KTM Duke 390",
-      category: "Sports",
-      price: 2000,
-      rating: 4.9,
-      features: ["Aggressive Design", "Powerful Engine", "Advanced ABS", "LED Lights"],
-      image:
-        "https://images.unsplash.com/photo-1615172282427-9a57ef2d142e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 4,
-      name: "TVS Apache RR 310",
-      category: "Sports",
-      price: 1800,
-      rating: 4.7,
-      features: ["Racing Design", "Powerful Engine", "Dual Channel ABS", "Slipper Clutch"],
-      image:
-        "https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 5,
-      name: "Honda CB350",
-      category: "Cruiser",
-      price: 1400,
-      rating: 4.5,
-      features: ["Retro Design", "Smooth Engine", "LED Lights", "Digital-Analog Console"],
-      image:
-        "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 6,
-      name: "Yamaha MT-15",
-      category: "Naked",
-      price: 1300,
-      rating: 4.4,
-      features: ["Aggressive Styling", "Powerful Engine", "LED Headlamp", "Digital Console"],
-      image:
-        "https://images.unsplash.com/photo-1611241443322-78b19f75ea6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 7,
-      name: "Suzuki Gixxer SF",
-      category: "Sports",
-      price: 1250,
-      rating: 4.3,
-      features: ["Sporty Design", "Smooth Engine", "LED Lights", "Split Seats"],
-      image:
-        "https://images.unsplash.com/photo-1622185135505-2d795003994a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-    {
-      id: 8,
-      name: "Royal Enfield Himalayan",
-      category: "Adventure",
-      price: 1600,
-      rating: 4.7,
-      features: ["Off-Road Capability", "Long Travel Suspension", "Luggage Mounts", "Digital Compass"],
-      image:
-        "https://images.unsplash.com/photo-1604357209793-fca5dca89f97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    },
-  ]
+  
+  // Fetch bikes from API
+  useEffect(() => {
+    const fetchBikes = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Build query parameters
+        const params = new URLSearchParams();
+        if (selectedCategory && selectedCategory !== "all") {
+          params.append('category', selectedCategory);
+        }
+        params.append('minPrice', priceRange[0].toString());
+        params.append('maxPrice', priceRange[1].toString());
+        
+        const response = await fetch(`/api/products?${params.toString()}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to fetch bikes');
+        }
+        
+        const data = await response.json();
+        setBikes(data.data || []);
+      } catch (err: any) {
+        console.error('Error fetching bikes:', err);
+        setError(err.message || 'Failed to fetch bikes');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchBikes();
+  }, [selectedCategory, priceRange]);
 
   const categories = [
     { name: "All", value: "all" },
@@ -120,13 +90,19 @@ export default function Products() {
     { name: "Sports", value: "sports" },
     { name: "Naked", value: "naked" },
     { name: "Adventure", value: "adventure" },
+    { name: "Touring", value: "touring" },
+    { name: "Street", value: "street" },
+    { name: "Off Road", value: "offroad" }
   ]
 
   const filteredBikes = bikes.filter(
-    (bike) =>
-      (!selectedCategory || selectedCategory === "all" || bike.category === selectedCategory) &&
-      bike.price >= priceRange[0] &&
-      bike.price <= priceRange[1],
+    (bike) => {
+      // Filter by search query if provided
+      if (searchQuery && !bike.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false;
+      }
+      return true;
+    }
   )
 
   return (
@@ -140,7 +116,13 @@ export default function Products() {
               Explore our wide selection of premium Indian motorcycles for rent
             </p>
             <div className="relative max-w-xl mx-auto">
-              <Input type="text" placeholder="Search for motorcycles..." className="w-full pr-10 py-6 text-lg" />
+              <Input 
+                type="text" 
+                placeholder="Search for motorcycles..." 
+                className="w-full pr-10 py-6 text-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
@@ -199,56 +181,29 @@ export default function Products() {
                       <input
                         type="range"
                         min="0"
-                        max="2000"
+                        max="5000"
+                        step="100"
                         value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], Number.parseInt(e.target.value)])}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                        className="w-full accent-primary"
                       />
                     </div>
                   </div>
-
-                  {/* Availability */}
-                  <div>
-                    <h4 className="font-medium mb-3">Availability</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input type="checkbox" id="available-now" className="h-4 w-4 text-primary focus:ring-primary" />
-                        <label htmlFor="available-now" className="ml-2 text-gray-700">
-                          Available Now
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-black">Apply Filters</Button>
                 </div>
-              </div>
-
-              <div className="bg-primary/10 p-6 rounded-lg border border-primary/20">
-                <h3 className="text-lg font-bold mb-2">Need Help?</h3>
-                <p className="text-gray-700 mb-4">
-                  Our team is here to help you find the perfect motorcycle for your adventure.
-                </p>
-                <Link href="/contact">
-                  <Button
-                    variant="outline"
-                    className="w-full border-primary text-primary hover:bg-primary hover:text-white"
-                  >
-                    Contact Us
-                  </Button>
-                </Link>
               </div>
             </motion.div>
 
             {/* Products Grid */}
             <div className="lg:w-3/4">
               <div className="flex justify-between items-center mb-6">
-                <p className="text-gray-600">{filteredBikes.length} motorcycles found</p>
+                <p className="text-gray-500">
+                  Showing <span className="font-medium text-black">{filteredBikes.length}</span> bikes
+                </p>
                 <div className="flex items-center">
-                  <span className="mr-2 text-gray-700">Sort by:</span>
+                  <span className="mr-2 text-sm text-gray-500">Sort by:</span>
                   <div className="relative">
-                    <select className="appearance-none bg-white border border-gray-300 rounded-md py-2 pl-3 pr-10 text-gray-700 cursor-pointer focus:outline-none focus:ring-primary focus:border-primary">
-                      <option>Popularity</option>
+                    <select className="pl-3 pr-8 py-2 appearance-none border border-gray-200 rounded-md bg-white text-gray-700 text-sm">
+                      <option>Featured</option>
                       <option>Price: Low to High</option>
                       <option>Price: High to Low</option>
                       <option>Rating</option>
@@ -258,98 +213,96 @@ export default function Products() {
                 </div>
               </div>
 
-              <motion.div
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-                className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                {filteredBikes.map((bike) => (
-                  <motion.div
-                    key={bike.id}
-                    variants={fadeIn}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-gray-100"
-                  >
-                    <Link href={`/products/${bike.id}`}>
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={bike.image || "/placeholder.svg"}
-                          alt={bike.name}
-                          fill
-                          className="object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                        <div className="absolute top-2 right-2 bg-primary text-black text-sm font-bold px-2 py-1 rounded">
-                          ₹{bike.price}/day
-                        </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex justify-between items-start mb-1">
-                          <h3 className="text-lg text-black font-bold">{bike.name}</h3>
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-primary mr-1" />
-                            <span className="text-sm font-medium">{bike.rating}</span>
-                          </div>
-                        </div>
-                        <p className="text-gray-600 mb-4">{bike.category}</p>
-                        <p className="text-gray-700 text-sm mb-4">{bike.features.join(", ")}</p>
-                        <Button className="w-full bg-primary hover:bg-primary/90 text-black">View Details</Button>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              {filteredBikes.length === 0 && (
-                <div className="text-center py-12">
-                  <Bike className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">No motorcycles found</h3>
-                  <p className="text-gray-600 mb-6">Try adjusting your filters to find what you're looking for.</p>
-                  <Button
-                    onClick={() => {
-                      setSelectedCategory(null)
-                      setPriceRange([0, 2000])
-                    }}
-                    className="bg-primary hover:bg-primary/90 text-black"
-                  >
-                    Reset Filters
-                  </Button>
+              {/* Loading State */}
+              {isLoading && (
+                <div className="flex flex-col items-center justify-center py-20 w-full col-span-3">
+                  <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+                  <p className="text-gray-500">Loading bikes...</p>
                 </div>
+              )}
+              
+              {/* Error State */}
+              {error && (
+                <div className="flex flex-col items-center justify-center py-20 w-full col-span-3">
+                  <div className="bg-red-50 p-6 rounded-lg text-center max-w-md">
+                    <h3 className="text-lg font-medium text-red-800 mb-2">Error Loading Bikes</h3>
+                    <p className="text-red-600">{error}</p>
+                    <Button 
+                      className="mt-4" 
+                      variant="outline"
+                      onClick={() => window.location.reload()}
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Bikes Grid */}
+              {!isLoading && !error && (
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={staggerContainer}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                  {filteredBikes.length > 0 ? filteredBikes.map((bike) => (
+                    <motion.div
+                      key={bike.id}
+                      variants={fadeIn}
+                      className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-md hover:shadow-lg transition-shadow duration-300"
+                    >
+                      <div className="relative">
+                        <div className="aspect-video overflow-hidden">
+                          <img 
+                            src={bike.images && bike.images.length > 0 ? bike.images[0].url : 
+                              "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"} 
+                            alt={bike.name} 
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" 
+                          />
+                        </div>
+                        <span className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm text-primary font-medium rounded-full text-sm px-3 py-1">
+                          ₹{bike.price}/day
+                        </span>
+                      </div>
+
+                      <div className="p-6">
+                        <div className="flex items-center text-amber-500 mb-2">
+                          <Star className="h-4 w-4 fill-current" />
+                          <span className="text-sm ml-1">{bike.rating} ({Math.floor(Math.random() * 100) + 10} reviews)</span>
+                        </div>
+
+                        <h3 className="text-xl font-bold">{bike.name}</h3>
+                        <p className="text-gray-500 mb-4">{bike.category} {bike.brand && bike.model ? `• ${bike.brand} ${bike.model}` : ''}</p>
+
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {(bike.features || []).slice(0, 3).map((feature, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center text-xs font-medium bg-gray-50 px-2 py-1 rounded-md"
+                            >
+                              <Check className="h-3 w-3 mr-1 text-primary" />
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+
+                        <Link href={`/products/${bike.id}`}>
+                          <Button className="w-full">View Details</Button>
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )) : (
+                    <div className="col-span-3 flex flex-col items-center justify-center py-12">
+                      <Bike className="h-16 w-16 text-gray-300 mb-4" />
+                      <h3 className="text-xl font-bold text-gray-800 mb-2">No bikes found</h3>
+                      <p className="text-gray-500">Try adjusting your filters or search query</p>
+                    </div>
+                  )}
+                </motion.div>
               )}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-primary">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-black">Can't Find What You're Looking For?</h2>
-            <p className="text-lg text-black/80 mb-8">
-              Contact us with your specific motorcycle requirements and we'll help you find the perfect ride.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href="/login">
-                <Button className="bg-black hover:bg-black/90 text-white font-medium px-8 py-6 text-lg h-auto">
-                  Rent Now
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button
-                  variant="outline"
-                  className="bg-white text-black border-black hover:bg-gray-100 font-medium px-8 py-6 text-lg h-auto"
-                >
-                  Contact Us
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
         </div>
       </section>
     </div>

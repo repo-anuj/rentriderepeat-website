@@ -106,7 +106,7 @@ export default function Checkout() {
         // Fetch vendor details if available
         if (bike.vendor) {
           try {
-            const vendorResponse = await fetch(`/api/vendor/${bike.vendor}`)
+            const vendorResponse = await fetch(`/api/vendors/${bike.vendor}`)
             if (vendorResponse.ok) {
               const vendorResult = await vendorResponse.json()
               if (vendorResult.success) {

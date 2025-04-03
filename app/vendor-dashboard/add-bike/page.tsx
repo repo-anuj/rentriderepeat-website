@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 import Link from "next/link"
 import { 
   Bike, 
@@ -12,7 +13,10 @@ import {
   Calendar,
   Users,
   Settings,
-  LogOut
+  LogOut,
+  X,
+  Loader2,
+  ImageIcon
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -28,27 +32,48 @@ export default function AddBikePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState("add-bike")
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imageLoading, setImageLoading] = useState(false)
   
-  const [formData, setFormData] = useState({
+  // Image upload state
+  const [images, setImages] = useState<ImageData[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  interface BikeFormData {
+    name: string
+    category: string
+    brand: string
+    model: string
+    year: string
+    description: string
+    cc: string
+    fuelType: string
+    mileage: string
+    condition: string
+    price: string
+    insurance: boolean
+    features: string[]
+  }
+
+  interface ImageData {
+    url: string
+    caption?: string
+    base64Data?: string
+  }
+
+  const [formData, setFormData] = useState<BikeFormData>({
     name: "",
     category: "",
-    price: "",
-    description: "",
     brand: "",
     model: "",
     year: "",
+    description: "",
     cc: "",
-    condition: "excellent",
-    fuelType: "",
+    fuelType: "Petrol",
     mileage: "",
+    condition: "Excellent",
+    price: "",
     insurance: true,
-    features: {
-      abs: false,
-      bluetooth: false,
-      usbCharger: false,
-      diskBrake: false,
-      digitalMeter: false
-    }
+    features: []
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -64,15 +89,18 @@ export default function AddBikePage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleFeatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      features: {
-        ...prev.features,
-        [name]: checked
-      }
-    }))
+  const handleFeatureToggle = (feature: string, checked: boolean) => {
+    if (checked) {
+      setFormData({ 
+        ...formData, 
+        features: [...formData.features, feature] 
+      })
+    } else {
+      setFormData({ 
+        ...formData, 
+        features: formData.features.filter((f: string) => f !== feature) 
+      })
+    }
   }
 
   const handleInsuranceChange = (value: string) => {
@@ -87,15 +115,144 @@ export default function AddBikePage() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle image upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    const file = e.target.files[0];
+    setImageLoading(true);
+    
+    try {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        throw new Error('Image size should be less than 5MB');
+      }
+      
+      // Read file as base64
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        if (!event.target?.result) {
+          setImageLoading(false);
+          return;
+        }
+        
+        const base64Data = event.target.result as string;
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          alert('Authentication required. Please log in again.');
+          setImageLoading(false);
+          return;
+        }
+        
+        // Upload image to server
+        const formData = new FormData();
+        formData.append('image', base64Data);
+        formData.append('caption', file.name);
+        
+        const response = await fetch('/api/vendor/images', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to upload image');
+        }
+        
+        // Add image to state
+        setImages(prev => [...prev, {
+          url: data.data.url,
+          caption: data.data.caption,
+          base64Data: base64Data
+        }]);
+        
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      };
+      
+      reader.readAsDataURL(file);
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      alert(error.message || 'Failed to upload image');
+    } finally {
+      setImageLoading(false);
+    }
+  };
+  
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Get the token from localStorage
+      const token = localStorage.getItem('token')
+      
+      if (!token) {
+        throw new Error('Authentication required. Please log in again.')
+      }
+      
+      // Prepare the bike data
+      const bikePayload = {
+        name: formData.name,
+        category: formData.category,
+        brand: formData.brand,
+        model: formData.model,
+        year: formData.year,
+        description: formData.description,
+        engineCapacity: formData.cc,
+        fuelType: formData.fuelType,
+        mileage: formData.mileage,
+        condition: formData.condition,
+        dailyRate: formData.price,
+        securityDeposit: parseInt(formData.price) * 2, // Example calculation for deposit
+        insuranceAvailable: formData.insurance,
+        features: Array.isArray(formData.features) ? formData.features : [],
+        images: images.map(img => ({
+          url: img.url,
+          caption: img.caption || '',
+          base64Data: img.base64Data
+        }))
+      }
+      
+      // Send the request to the API
+      const response = await fetch('/api/vendor/bikes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bikePayload)
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to add bike')
+      }
+      
+      // Show success message
+      alert('Bike added successfully!')
+      
+      // Redirect to bikes page
+      router.push('/vendor-dashboard/bikes')
+    } catch (error: any) {
+      console.error('Error adding bike:', error)
+      alert(error.message || 'An error occurred while adding the bike')
+    } finally {
       setIsLoading(false)
-      router.push("/vendor-dashboard")
-    }, 1500)
+    }
   }
 
   const handleLogout = () => {
@@ -360,6 +517,66 @@ export default function AddBikePage() {
                       </RadioGroup>
                     </div>
                     
+                    {/* Image Upload Section */}
+                    <div className="space-y-4">
+                      <Label>Bike Images</Label>
+                      <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          ref={fileInputRef}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={imageLoading}
+                          className="mx-auto"
+                        >
+                          {imageLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud className="h-4 w-4 mr-2" />
+                              Upload Images
+                            </>
+                          )}
+                        </Button>
+                        <p className="text-sm text-gray-500 mt-2">
+                          You can upload multiple images. Max 5MB each.
+                        </p>
+                      </div>
+                      
+                      {images.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium mb-2">Uploaded Images:</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            {images.map((image, index) => (
+                              <div key={index} className="relative rounded-lg overflow-hidden border h-24">
+                                <img 
+                                  src={image.base64Data} 
+                                  alt={image.caption || `Image ${index + 1}`} 
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  className="absolute top-1 right-1 bg-black/50 rounded-full p-1"
+                                  onClick={() => removeImage(index)}
+                                >
+                                  <X className="h-3 w-3 text-white" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
                     <div className="space-y-2">
                       <Label>Features</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 pt-2">
@@ -368,8 +585,17 @@ export default function AddBikePage() {
                             type="checkbox" 
                             id="abs" 
                             name="abs"
-                            checked={formData.features.abs}
-                            onChange={handleFeatureChange}
+                            checked={Array.isArray(formData.features) ? formData.features.includes('ABS') : false}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setFormData({ ...formData, features: [...formData.features, 'ABS'] })
+                              } else {
+                                setFormData({ 
+                                  ...formData, 
+                                  features: formData.features.filter((f: string) => f !== 'ABS') 
+                                })
+                              }
+                            }}
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <Label htmlFor="abs" className="cursor-pointer">ABS</Label>
@@ -380,8 +606,8 @@ export default function AddBikePage() {
                             type="checkbox" 
                             id="bluetooth" 
                             name="bluetooth"
-                            checked={formData.features.bluetooth}
-                            onChange={handleFeatureChange}
+                            checked={formData.features.includes('bluetooth')}
+                            onChange={handleFileChange}
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <Label htmlFor="bluetooth" className="cursor-pointer">Bluetooth</Label>
@@ -392,8 +618,8 @@ export default function AddBikePage() {
                             type="checkbox" 
                             id="usbCharger" 
                             name="usbCharger"
-                            checked={formData.features.usbCharger}
-                            onChange={handleFeatureChange}
+                            checked={formData.features.includes('usbCharger')}
+                            onChange={handleFileChange}
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <Label htmlFor="usbCharger" className="cursor-pointer">USB Charger</Label>
@@ -404,8 +630,8 @@ export default function AddBikePage() {
                             type="checkbox" 
                             id="diskBrake" 
                             name="diskBrake"
-                            checked={formData.features.diskBrake}
-                            onChange={handleFeatureChange}
+                            checked={formData.features.includes('diskBrake')}
+                            onChange={handleFileChange}
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <Label htmlFor="diskBrake" className="cursor-pointer">Disk Brake</Label>
@@ -416,8 +642,8 @@ export default function AddBikePage() {
                             type="checkbox" 
                             id="digitalMeter" 
                             name="digitalMeter"
-                            checked={formData.features.digitalMeter}
-                            onChange={handleFeatureChange}
+                            checked={formData.features.includes('digitalMeter')}
+                            onChange={handleFileChange}
                             className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <Label htmlFor="digitalMeter" className="cursor-pointer">Digital Meter</Label>

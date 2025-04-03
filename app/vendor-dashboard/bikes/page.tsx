@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { 
   Bike, 
   PlusCircle, 
@@ -15,7 +16,9 @@ import {
   Calendar,
   Users,
   Settings,
-  LogOut
+  LogOut,
+  AlertCircle,
+  Loader2
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -35,64 +38,26 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// Sample bike data
-const bikes = [
-  {
-    id: 1,
-    name: 'Royal Enfield Classic 350',
-    category: 'Cruiser',
-    price: 35,
-    rating: 4.8,
-    status: 'Available',
-    bookings: 15,
-    revenue: 8750,
-    img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  },
-  {
-    id: 2,
-    name: 'Honda CBR 250R',
-    category: 'Sports',
-    price: 45,
-    rating: 4.5,
-    status: 'Rented',
-    bookings: 10,
-    revenue: 6300,
-    img: 'https://images.unsplash.com/photo-1615172282427-9a57ef2d142e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  },
-  {
-    id: 3,
-    name: 'Bajaj Pulsar NS200',
-    category: 'Sports',
-    price: 30,
-    rating: 4.3,
-    status: 'Available',
-    bookings: 8,
-    revenue: 3600,
-    img: 'https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  },
-  {
-    id: 4,
-    name: 'Yamaha MT-15',
-    category: 'Naked',
-    price: 40,
-    rating: 4.7,
-    status: 'Maintenance',
-    bookings: 6,
-    revenue: 3120,
-    img: 'https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  },
-  {
-    id: 5,
-    name: 'KTM Duke 200',
-    category: 'Street',
-    price: 50,
-    rating: 4.6,
-    status: 'Available',
-    bookings: 12,
-    revenue: 7200,
-    img: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-  },
-];
+// Define bike interface
+interface Bike {
+  _id: string;
+  name: string;
+  category: string;
+  brand: string;
+  model: string;
+  year: number;
+  dailyRate: number;
+  availabilityStatus: string;
+  images: Array<{url: string, caption?: string}>;
+  engineCapacity?: number;
+  description?: string;
+  features?: any;
+  averageRating?: number;
+  totalBookings?: number;
+}
+
+// Default bike image if none is provided
+const defaultBikeImage = "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80";
 
 export default function BikesPage() {
   const router = useRouter()
@@ -100,10 +65,88 @@ export default function BikesPage() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [activeTab, setActiveTab] = useState("bikes")
-
-  const handleDelete = (id: number) => {
-    // In a real app, you would delete the bike with an API call
-    alert(`Delete bike with ID: ${id}`)
+  
+  // State for bikes data
+  const [bikes, setBikes] = useState<Bike[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [isDeleteLoading, setIsDeleteLoading] = useState<string | null>(null)
+  
+  // Fetch bikes from API
+  useEffect(() => {
+    const fetchBikes = async () => {
+      setIsLoading(true)
+      setError(null)
+      
+      try {
+        const token = localStorage.getItem('token')
+        
+        if (!token) {
+          router.push('/signin')
+          return
+        }
+        
+        const response = await fetch('/api/vendor/bikes', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || 'Failed to fetch bikes')
+        }
+        
+        const data = await response.json()
+        setBikes(data.data || [])
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch bikes')
+        console.error('Error fetching bikes:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchBikes()
+  }, [])
+  
+  // Handle delete bike
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this bike?')) {
+      return
+    }
+    
+    setIsDeleteLoading(id)
+    
+    try {
+      const token = localStorage.getItem('token')
+      
+      if (!token) {
+        router.push('/signin')
+        return
+      }
+      
+      const response = await fetch(`/api/vendor/bikes/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Failed to delete bike')
+      }
+      
+      // Remove the deleted bike from state
+      setBikes(bikes.filter(bike => bike._id !== id))
+      alert('Bike deleted successfully')
+    } catch (err: any) {
+      alert(err.message || 'Error deleting bike')
+      console.error('Error deleting bike:', err)
+    } finally {
+      setIsDeleteLoading(null)
+    }
   }
 
   const filteredBikes = bikes.filter((bike) => {
@@ -111,10 +154,12 @@ export default function BikesPage() {
     const matchesSearch = bike.name.toLowerCase().includes(searchQuery.toLowerCase())
     
     // Filter by status
-    const matchesStatus = statusFilter === "all" || bike.status.toLowerCase() === statusFilter.toLowerCase()
+    const matchesStatus = statusFilter === "all" || 
+      (bike.availabilityStatus?.toLowerCase() === statusFilter.toLowerCase())
     
     // Filter by category
-    const matchesCategory = categoryFilter === "all" || bike.category.toLowerCase() === categoryFilter.toLowerCase()
+    const matchesCategory = categoryFilter === "all" || 
+      (bike.category?.toLowerCase() === categoryFilter.toLowerCase())
     
     return matchesSearch && matchesStatus && matchesCategory
   })
@@ -237,80 +282,119 @@ export default function BikesPage() {
             </CardContent>
           </Card>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBikes.map((bike) => (
-              <Card key={bike.id} className="overflow-hidden">
-                <div className="aspect-video bg-gray-100 relative overflow-hidden">
-                  <img 
-                    src={bike.img} 
-                    alt={bike.name} 
-                    className="w-full h-full object-cover" 
-                  />
-                  <div className="absolute top-2 right-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 rounded-full">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/vendor-dashboard/bikes/edit/${bike.id}`)}>
-                          <Pencil className="h-4 w-4 mr-2" /> Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(bike.id)} className="text-red-500">
-                          <Trash2 className="h-4 w-4 mr-2" /> Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="absolute bottom-2 left-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      bike.status === 'Available' 
-                        ? 'bg-green-100 text-green-800' 
-                        : bike.status === 'Rented' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {bike.status}
-                    </span>
-                  </div>
-                </div>
-                
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg">{bike.name}</h3>
-                  <p className="text-sm text-gray-500 mb-2">{bike.category} • ₹{bike.price}/day</p>
-                  
-                  <div className="flex justify-between items-center pt-2 border-t mt-2">
-                    <div>
-                      <p className="text-xs text-gray-500">Bookings</p>
-                      <p className="font-medium">{bike.bookings}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Revenue</p>
-                      <p className="font-medium">₹{bike.revenue}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Rating</p>
-                      <p className="font-medium">{bike.rating}/5</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          {filteredBikes.length === 0 && (
+          {isLoading ? (
             <div className="text-center py-12">
-              <Bike className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">No bikes found</h3>
-              <p className="text-gray-600 mb-6">Try adjusting your filters or add a new bike to your inventory.</p>
+              <Loader2 className="h-8 w-8 text-primary mx-auto animate-spin mb-4" />
+              <p className="text-gray-600">Loading your bikes...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">Error loading bikes</h3>
+              <p className="text-gray-600 mb-6">{error}</p>
               <Button
-                onClick={() => router.push('/vendor-dashboard/add-bike')}
+                onClick={() => window.location.reload()}
                 className="bg-primary hover:bg-primary/90 text-white"
               >
-                <PlusCircle className="h-4 w-4 mr-2" /> Add New Bike
+                Try Again
               </Button>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredBikes.map((bike) => (
+                  <Card key={bike._id} className="overflow-hidden">
+                    <div className="aspect-video bg-gray-100 relative overflow-hidden">
+                      <img 
+                        src={bike.images?.[0]?.url || defaultBikeImage} 
+                        alt={bike.name} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => {
+                          // If image fails to load, use default
+                          (e.target as HTMLImageElement).src = defaultBikeImage;
+                        }}
+                      />
+                      <div className="absolute top-2 right-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 rounded-full">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => router.push(`/vendor-dashboard/bikes/edit/${bike._id}`)}>
+                              <Pencil className="h-4 w-4 mr-2" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleDelete(bike._id)} 
+                              className="text-red-500"
+                              disabled={isDeleteLoading === bike._id}
+                            >
+                              {isDeleteLoading === bike._id ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Deleting...
+                                </>
+                              ) : (
+                                <>
+                                  <Trash2 className="h-4 w-4 mr-2" /> Delete
+                                </>
+                              )}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      <div className="absolute bottom-2 left-2">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          (!bike.availabilityStatus || bike.availabilityStatus === 'Available') 
+                            ? 'bg-green-100 text-green-800' 
+                            : bike.availabilityStatus === 'Rented' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {bike.availabilityStatus || 'Available'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <CardContent className="p-4">
+                      <h3 className="font-semibold text-lg">{bike.name}</h3>
+                      <p className="text-sm text-gray-500 mb-2">
+                        {bike.category} • {bike.brand} {bike.model} • ₹{bike.dailyRate}/day
+                      </p>
+                      
+                      <div className="flex justify-between items-center pt-2 border-t mt-2">
+                        <div>
+                          <p className="text-xs text-gray-500">Year</p>
+                          <p className="font-medium">{bike.year || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Engine</p>
+                          <p className="font-medium">{bike.engineCapacity || 'N/A'} cc</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Rating</p>
+                          <p className="font-medium">{bike.averageRating || 'New'}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              {filteredBikes.length === 0 && !isLoading && (
+                <div className="text-center py-12">
+                  <Bike className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold mb-2">No bikes found</h3>
+                  <p className="text-gray-600 mb-6">Try adjusting your filters or add a new bike to your inventory.</p>
+                  <Button
+                    onClick={() => router.push('/vendor-dashboard/add-bike')}
+                    className="bg-primary hover:bg-primary/90 text-white"
+                  >
+                    <PlusCircle className="h-4 w-4 mr-2" /> Add New Bike
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
