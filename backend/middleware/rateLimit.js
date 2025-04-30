@@ -13,7 +13,17 @@ const logger = require("../utils/logger");
 // Determine which rate limiter to use based on environment
 let rateLimiter;
 
-// Try to use Redis if available
+// For local development, always use memory rate limiter
+// In production, you can enable Redis by uncommenting the code below
+rateLimiter = new RateLimiterMemory({
+  points: 100, // Number of points
+  duration: 60, // Per 60 seconds
+});
+
+logger.info("Memory rate limiter initialized");
+
+// Uncomment this block to use Redis in production
+/*
 if (process.env.REDIS_HOST) {
   try {
     const redisClient = redis.createClient({
@@ -60,6 +70,7 @@ if (process.env.REDIS_HOST) {
 
   logger.info("Memory rate limiter initialized");
 }
+*/
 
 /**
  * Basic rate limiter for general API endpoints

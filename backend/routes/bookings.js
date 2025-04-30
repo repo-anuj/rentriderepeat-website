@@ -6,7 +6,7 @@ const validate = require('../middleware/validate');
 const {
   createBooking,
   getBookings,
-  getBookingById,
+  getBooking,
   updateBookingStatus,
   processPayment,
   getBookingStats
@@ -36,7 +36,7 @@ router.get('/stats', authorize('admin'), getBookingStats);
 router.post('/', validate(createBookingValidation), createBooking);
 
 // Get a single booking
-router.get('/:id', getBookingById);
+router.get('/:id', getBooking);
 
 // Update booking status
 router.put('/:id/status', validate(updateBookingStatusValidation), updateBookingStatus);

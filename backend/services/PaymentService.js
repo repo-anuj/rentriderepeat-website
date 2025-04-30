@@ -6,11 +6,42 @@ const crypto = require('crypto');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Initialize Razorpay if keys are available
+let razorpay;
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+  logger.info('Razorpay initialized successfully');
+} else {
+  logger.warn('Razorpay keys not found in environment variables. Payment features will be disabled.');
+  // Create a mock razorpay object for development
+  razorpay = {
+    orders: {
+      create: () => {
+        logger.warn('Attempted to create Razorpay order without API keys');
+        return { id: 'mock_order_id', amount: 0, currency: 'INR', receipt: 'mock_receipt' };
+      }
+    },
+    payments: {
+      fetch: () => {
+        logger.warn('Attempted to fetch Razorpay payment without API keys');
+        return { id: 'mock_payment_id', amount: 0, status: 'created' };
+      },
+      refund: () => {
+        logger.warn('Attempted to refund Razorpay payment without API keys');
+        return { id: 'mock_refund_id', amount: 0, status: 'created' };
+      }
+    },
+    refunds: {
+      fetch: () => {
+        logger.warn('Attempted to fetch Razorpay refund without API keys');
+        return { id: 'mock_refund_id', amount: 0, status: 'created' };
+      }
+    }
+  };
+}
 
 class PaymentService {
   /**
