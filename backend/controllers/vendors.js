@@ -1,7 +1,10 @@
-const User = require('../models/User');
-const Vendor = require('../models/Vendor');
-const Bike = require('../models/Bike');
-const Booking = require('../models/Booking');
+const VendorService = require("../services/VendorService");
+const AppError = require("../utils/AppError");
+const { successResponse } = require("../utils/responseHandler");
+const User = require("../models/User");
+const Vendor = require("../models/Vendor");
+const Bike = require("../models/Bike");
+const Booking = require("../models/Booking");
 
 // @desc    Get vendor dashboard stats
 // @route   GET /api/vendors/dashboard
@@ -13,23 +16,26 @@ exports.getVendorDashboard = async (req, res, next) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        error: 'Vendor profile not found',
+        error: "Vendor profile not found",
       });
     }
 
     // Get total revenue
     const bookings = await Booking.find({
       vendor: vendor._id,
-      status: { $in: ['Completed', 'Active'] },
+      status: { $in: ["Completed", "Active"] },
     });
 
-    const totalRevenue = bookings.reduce((sum, booking) => sum + booking.amount, 0);
+    const totalRevenue = bookings.reduce(
+      (sum, booking) => sum + booking.amount,
+      0
+    );
     const totalBookings = bookings.length;
 
     // Get active bikes count
     const activeBikes = await Bike.countDocuments({
       vendor: vendor._id,
-      availabilityStatus: 'Available',
+      availabilityStatus: "Available",
       isActive: true,
     });
 
@@ -44,8 +50,8 @@ exports.getVendorDashboard = async (req, res, next) => {
     })
       .sort({ createdAt: -1 })
       .limit(5)
-      .populate('user', 'name email')
-      .populate('bike', 'name');
+      .populate("user", "name email")
+      .populate("bike", "name");
 
     // Get monthly revenue
     const monthlyRevenue = await getMonthlyRevenue(vendor._id);
@@ -81,19 +87,15 @@ exports.updateVendorProfile = async (req, res, next) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        error: 'Vendor profile not found',
+        error: "Vendor profile not found",
       });
     }
 
     // Update vendor profile
-    const updatedVendor = await Vendor.findByIdAndUpdate(
-      vendor._id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedVendor = await Vendor.findByIdAndUpdate(vendor._id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     res.status(200).json({
       success: true,
@@ -114,7 +116,7 @@ exports.getVendorBikes = async (req, res, next) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        error: 'Vendor profile not found',
+        error: "Vendor profile not found",
       });
     }
 
@@ -141,7 +143,7 @@ exports.getVendorBookings = async (req, res, next) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        error: 'Vendor profile not found',
+        error: "Vendor profile not found",
       });
     }
 
@@ -154,8 +156,8 @@ exports.getVendorBookings = async (req, res, next) => {
       ...statusFilter,
     })
       .sort({ createdAt: -1 })
-      .populate('user', 'name email phone')
-      .populate('bike', 'name brand model');
+      .populate("user", "name email phone")
+      .populate("bike", "name brand model");
 
     res.status(200).json({
       success: true,
@@ -177,16 +179,18 @@ exports.getVendorCustomers = async (req, res, next) => {
     if (!vendor) {
       return res.status(404).json({
         success: false,
-        error: 'Vendor profile not found',
+        error: "Vendor profile not found",
       });
     }
 
     // Get unique customer IDs from bookings
-    const bookings = await Booking.find({ vendor: vendor._id }).distinct('user');
+    const bookings = await Booking.find({ vendor: vendor._id }).distinct(
+      "user"
+    );
 
     // Get customer details
     const customers = await User.find({ _id: { $in: bookings } }).select(
-      'name email phone'
+      "name email phone"
     );
 
     // For each customer, get booking stats
@@ -233,33 +237,48 @@ exports.getVendorCustomers = async (req, res, next) => {
 // Helper function to get monthly revenue data
 async function getMonthlyRevenue(vendorId) {
   const currentDate = new Date();
-  const sixMonthsAgo = new Date(currentDate.setMonth(currentDate.getMonth() - 6));
+  const sixMonthsAgo = new Date(
+    currentDate.setMonth(currentDate.getMonth() - 6)
+  );
 
   const bookings = await Booking.find({
     vendor: vendorId,
-    status: 'Completed',
+    status: "Completed",
     createdAt: { $gte: sixMonthsAgo },
   });
 
   // Group by month and sum the amounts
   const monthlyData = {};
-  
-  bookings.forEach(booking => {
+
+  bookings.forEach((booking) => {
     const date = new Date(booking.createdAt);
     const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-    
+
     if (!monthlyData[monthYear]) {
       monthlyData[monthYear] = 0;
     }
-    
+
     monthlyData[monthYear] += booking.amount;
   });
 
   // Convert to array for chart data
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
-  const chartData = Object.keys(monthlyData).map(key => {
-    const [year, month] = key.split('-');
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const chartData = Object.keys(monthlyData).map((key) => {
+    const [year, month] = key.split("-");
     return {
       month: months[parseInt(month) - 1],
       revenue: monthlyData[key],
@@ -279,21 +298,147 @@ async function getMonthlyRevenue(vendorId) {
 // Helper function to get bike usage data
 async function getBikeUsage(vendorId) {
   const bikes = await Bike.find({ vendor: vendorId });
-  
-  const bikeUsage = await Promise.all(bikes.map(async bike => {
-    const bookings = await Booking.countDocuments({
-      bike: bike._id,
-      status: { $in: ['Completed', 'Active'] },
-    });
-    
-    return {
-      name: bike.name,
-      bookings,
-    };
-  }));
-  
+
+  const bikeUsage = await Promise.all(
+    bikes.map(async (bike) => {
+      const bookings = await Booking.countDocuments({
+        bike: bike._id,
+        status: { $in: ["Completed", "Active"] },
+      });
+
+      return {
+        name: bike.name,
+        bookings,
+      };
+    })
+  );
+
   // Sort by most booked
   bikeUsage.sort((a, b) => b.bookings - a.bookings);
-  
+
   return bikeUsage.slice(0, 5); // Return top 5
-} 
+}
+
+/**
+ * @desc    Get vendor profile
+ * @route   GET /api/vendors/profile
+ * @access  Private/Vendor
+ */
+exports.getVendorProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    // Get vendor profile
+    const vendorData = await VendorService.getVendorProfile(userId);
+
+    return successResponse(
+      res,
+      200,
+      "Vendor profile retrieved successfully",
+      vendorData
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Get all vendors
+ * @route   GET /api/vendors
+ * @access  Private/Admin
+ */
+exports.getAllVendors = async (req, res, next) => {
+  try {
+    // Get query parameters
+    const queryParams = req.query;
+
+    // Get all vendors
+    const vendors = await VendorService.getAllVendors(queryParams);
+
+    return successResponse(
+      res,
+      200,
+      "Vendors retrieved successfully",
+      vendors.data,
+      {
+        pagination: vendors.pagination,
+        total: vendors.total,
+        count: vendors.count,
+      }
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Get vendor by ID
+ * @route   GET /api/vendors/:id
+ * @access  Private/Admin
+ */
+exports.getVendorById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Get vendor by ID
+    const vendor = await VendorService.getVendorById(id);
+
+    return successResponse(res, 200, "Vendor retrieved successfully", vendor);
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Validate GST number
+ * @route   POST /api/vendors/validate/gst
+ * @access  Public
+ */
+exports.validateGST = async (req, res, next) => {
+  try {
+    const { gstNumber } = req.body;
+
+    if (!gstNumber) {
+      throw AppError.validationError("Please provide a GST number");
+    }
+
+    // Validate GST number
+    const isValid = await VendorService.validateGST(gstNumber);
+
+    return successResponse(
+      res,
+      200,
+      isValid ? "GST number is valid" : "GST number is invalid",
+      { isValid }
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * @desc    Validate PAN number
+ * @route   POST /api/vendors/validate/pan
+ * @access  Public
+ */
+exports.validatePAN = async (req, res, next) => {
+  try {
+    const { panNumber } = req.body;
+
+    if (!panNumber) {
+      throw AppError.validationError("Please provide a PAN number");
+    }
+
+    // Validate PAN number
+    const isValid = await VendorService.validatePAN(panNumber);
+
+    return successResponse(
+      res,
+      200,
+      isValid ? "PAN number is valid" : "PAN number is invalid",
+      { isValid }
+    );
+  } catch (err) {
+    next(err);
+  }
+};

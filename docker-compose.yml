@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # Application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bikerent/app:latest
+    container_name: bikerent-app
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+      - redis
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/bikerent
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRE=${JWT_EXPIRE}
+      - JWT_COOKIE_EXPIRE=${JWT_COOKIE_EXPIRE}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_EMAIL=${SMTP_EMAIL}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - FROM_EMAIL=${FROM_EMAIL}
+      - FROM_NAME=${FROM_NAME}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+    volumes:
+      - app-logs:/app/logs
+      - app-uploads:/app/public/uploads
+    networks:
+      - app-network
+
+  # MongoDB service
+  mongodb:
+    image: mongo:5.0
+    container_name: bikerent-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=bikerent
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+    networks:
+      - app-network
+
+  # Redis service
+  redis:
+    image: redis:6-alpine
+    container_name: bikerent-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+  # Nginx service
+  nginx:
+    image: nginx:1.21-alpine
+    container_name: bikerent-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./scripts/nginx-bikerent.conf:/etc/nginx/conf.d/default.conf
+      - ./scripts/letsencrypt:/etc/letsencrypt
+      - ./scripts/letsencrypt-webroot:/var/www/letsencrypt
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+volumes:
+  app-logs:
+  app-uploads:
+  mongodb-data:
+  mongodb-config:
+  redis-data:
+
+networks:
+  app-network:
+    driver: bridge

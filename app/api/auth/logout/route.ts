@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
-    // In a real-world scenario with HTTP-only cookies, you would clear them here
-    // Since we're using localStorage on the client side, the actual logout happens there
-    
-    return NextResponse.json({
+    // Create a response
+    const response = NextResponse.json({
       success: true,
       message: 'Logged out successfully'
     });
+
+    // Clear the token cookie
+    response.cookies.set({
+      name: 'token',
+      value: '',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      expires: new Date(0), // Expire immediately
+      path: '/'
+    });
+
+    return response;
   } catch (error) {
     console.error('Error in logout:', error);
     return NextResponse.json(
@@ -16,4 +26,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// For backward compatibility
+export async function POST(request: NextRequest) {
+  return GET(request);
 }

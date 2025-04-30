@@ -4,74 +4,52 @@ import type React from "react"
 
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Toaster, toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useAuth } from "@/context/AuthContext"
 
 export default function SignIn() {
-  const router = useRouter()
+  // We don't need router anymore as AuthContext handles redirects
+  const { login, loading, error: authError } = useAuth()
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [localError, setLocalError] = useState("")
+
+  // Use either the context error or local error
+  const error = authError || localError
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
     // Clear error when user types
-    if (error) setError("")
+    if (error) setLocalError("")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    setLocalError("")
 
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
+      // Use the login function from AuthContext
+      const success = await login(formData.email, formData.password)
 
-      const data = await response.json()
+      if (success) {
+        // Show success message
+        toast.success('Sign in successful!')
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Sign in failed')
+        // No need to redirect here as the AuthContext will handle it
       }
-
-      // Store token and user data in localStorage
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
-      
-      if (data.vendor) {
-        localStorage.setItem('vendor', JSON.stringify(data.vendor))
-      }
-
-      // Show success message
-      toast.success('Sign in successful!')
-
-      // Redirect based on user role
-      setTimeout(() => {
-        if (data.user.role === 'vendor') {
-          router.push('/vendor-dashboard')
-        } else {
-          router.push('/products')
-        }
-      }, 1000)
-    } catch (error: any) {
-      console.error('Sign in error:', error)
-      setError(error.message || 'Invalid email or password')
-      setIsLoading(false)
+    } catch (err: any) {
+      console.error('Sign in error:', err)
+      setLocalError(err.message || 'Invalid email or password')
     }
   }
 
@@ -164,10 +142,10 @@ export default function SignIn() {
 
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={loading}
                   className="w-full bg-[#ffc700] hover:bg-[#e6b400] text-black font-medium py-6"
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </div>
 

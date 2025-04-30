@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Menu, X, Bike, Store, User, LogOut, Settings, ChevronDown, ShoppingBag } from "lucide-react"
+import { Search, Menu, X, Bike, Store, User, LogOut, Settings, ChevronDown, ShoppingBag, CheckCircle, AlertCircle } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,130 +17,51 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Toaster, toast } from "sonner"
+import { useAuth } from "@/context/AuthContext"
+import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type UserData = {
   _id: string;
   name: string;
   email: string;
   role: string;
+  isVerified?: boolean;
 }
 
 type VendorData = {
   _id: string;
   businessName: string;
   isVerified: boolean;
+  documentStatus?: string;
 }
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [vendorData, setVendorData] = useState<VendorData | null>(null)
   const pathname = usePathname()
   const router = useRouter()
 
+  // Use the auth context instead of local state
+  const { user, vendor, loading, logout } = useAuth()
+
+  // Check if user is logged in
+  const isLoggedIn = !!user
+
+  // For type safety, cast the user and vendor to our types
+  const userData = user as UserData | null
+  const vendorData = vendor as VendorData | null
+
   const isActive = (path: string) => pathname === path
 
-  // Check if user is logged in on component mount and fetch user data from MongoDB
-  useEffect(() => {
-    const checkAuth = async () => {
-      setIsLoading(true)
-      
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) {
-          setIsLoggedIn(false)
-          setIsLoading(false)
-          return
-        }
-        
-        // First try to get basic user data from localStorage
-        const storedUser = localStorage.getItem('user')
-        let userFromStorage = null
-        
-        if (storedUser) {
-          try {
-            userFromStorage = JSON.parse(storedUser)
-            // Set user data from storage temporarily while we fetch from server
-            setUserData(userFromStorage)
-            setIsLoggedIn(true)
-          } catch (error) {
-            console.error('Error parsing user data from storage:', error)
-          }
-        }
-        
-        // Fetch fresh user data from MongoDB via API
-        const response = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-        
-        if (response.ok) {
-          const data = await response.json()
-          
-          if (data.success) {
-            setUserData(data.user)
-            if (data.vendor) {
-              setVendorData(data.vendor)
-              // Update vendor data in localStorage
-              localStorage.setItem('vendor', JSON.stringify(data.vendor))
-            }
-            // Update user data in localStorage to keep it fresh
-            localStorage.setItem('user', JSON.stringify(data.user))
-            setIsLoggedIn(true)
-          } else {
-            // Token invalid or user not found
-            handleLogout()
-          }
-        } else {
-          // API call failed, fallback to localStorage data
-          if (!userFromStorage) {
-            handleLogout()
-          }
-        }
-      } catch (error) {
-        console.error('Error checking authentication:', error)
-        // Don't log out on error - use localStorage data as fallback
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    
-    checkAuth()
-  }, [])
-
+  // Handle logout
   const handleLogout = async () => {
-    setIsLoading(true)
-    
     try {
-      // Call logout API (server-side logout)
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+      await logout()
+      toast.success('Logged out successfully')
+      router.push('/')
     } catch (error) {
       console.error('Error during logout:', error)
-    } finally {
-      // Client-side logout (clear localStorage)
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      localStorage.removeItem('vendor')
-      
-      // Update state
-      setIsLoggedIn(false)
-      setUserData(null)
-      setVendorData(null)
-      setIsLoading(false)
-      
-      // Show success message
-      toast.success('Logged out successfully')
-      
-      // Redirect to home page
-      router.push('/')
+      toast.error('Failed to logout. Please try again.')
     }
   }
 
@@ -152,14 +73,14 @@ export default function Navbar() {
       { name: "About", path: "/about" },
       { name: "Contact", path: "/contact" },
     ]
-    
+
     if (userData?.role === 'vendor') {
       return [
         ...baseItems,
         { name: "Dashboard", path: "/vendor-dashboard" }
       ]
     }
-    
+
     return baseItems
   }
 
@@ -204,7 +125,7 @@ export default function Navbar() {
           </div>
 
           {/* Auth state-based buttons */}
-          {isLoading ? (
+          {loading ? (
             <Skeleton className="h-10 w-32" />
           ) : isLoggedIn ? (
             <>
@@ -217,18 +138,106 @@ export default function Navbar() {
                   </Button>
                 </Link>
               )}
-              
-              {/* User dropdown */}
+
+              {/* User dropdown with verification status */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100 flex items-center">
                     <User className="h-4 w-4 mr-2" />
                     <span className="mr-1">{userData?.name?.split(' ')[0] || 'User'}</span>
-                    <ChevronDown className="h-4 w-4" />
+
+                    {/* Show verification badge for all users */}
+                    {userData?.isVerified ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <CheckCircle className="h-4 w-4 text-green-500 ml-1" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Verified Account</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <AlertCircle className="h-4 w-4 text-amber-500 ml-1" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Email not verified</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+
+                    <ChevronDown className="h-4 w-4 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuContent align="end" className="w-64">
+                  <DropdownMenuLabel className="flex flex-col">
+                    <span>{userData?.name}</span>
+                    <span className="text-xs text-gray-500 mt-1">{userData?.email}</span>
+
+                    {/* Show role badge */}
+                    <div className="mt-2">
+                      {userData?.role === 'vendor' && (
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                          Vendor
+                        </Badge>
+                      )}
+                      {userData?.role === 'admin' && (
+                        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                          Admin
+                        </Badge>
+                      )}
+                      {userData?.role === 'user' && (
+                        <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                          User
+                        </Badge>
+                      )}
+
+                      {/* Show verification status */}
+                      {userData?.isVerified ? (
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 ml-2">
+                          Verified
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 ml-2">
+                          Unverified
+                        </Badge>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
+
+                  {/* Show vendor info if applicable */}
+                  {userData?.role === 'vendor' && vendorData && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-sm">
+                        <p className="font-medium text-gray-700">{vendorData.businessName}</p>
+                        <div className="flex items-center mt-1">
+                          {vendorData.isVerified ? (
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Verified Vendor
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              Pending Verification
+                            </Badge>
+                          )}
+                        </div>
+                        {vendorData.documentStatus && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Documents: {vendorData.documentStatus.replace('_', ' ')}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
+
                   <DropdownMenuSeparator />
                   <Link href="/profile">
                     <DropdownMenuItem className="cursor-pointer">
@@ -247,6 +256,14 @@ export default function Navbar() {
                       <DropdownMenuItem className="cursor-pointer">
                         <Store className="mr-2 h-4 w-4" />
                         <span>Vendor Dashboard</span>
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
+                  {userData?.role === 'admin' && (
+                    <Link href="/admin/dashboard">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Store className="mr-2 h-4 w-4" />
+                        <span>Admin Dashboard</span>
                       </DropdownMenuItem>
                     </Link>
                   )}
@@ -305,48 +322,118 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-              
-              {isLoading ? (
+
+              {loading ? (
                 <div className="py-2 border-t border-gray-100">
                   <Skeleton className="h-10 w-full" />
                 </div>
               ) : isLoggedIn ? (
                 <>
                   <div className="py-2 border-t border-gray-100">
+                    {/* User info section */}
                     <div className="flex items-center py-2">
                       <User className="h-5 w-5 mr-2 text-gray-600" />
                       <span className="font-medium">{userData?.name || 'User'}</span>
+
+                      {/* Verification status icon */}
+                      {userData?.isVerified ? (
+                        <CheckCircle className="h-4 w-4 text-green-500 ml-2" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-amber-500 ml-2" />
+                      )}
+
+                      {/* Role badge */}
                       {userData?.role === 'vendor' && (
-                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                        <Badge className="ml-2 bg-blue-100 text-blue-800 border-blue-200">
                           Vendor
-                        </span>
+                        </Badge>
+                      )}
+                      {userData?.role === 'admin' && (
+                        <Badge className="ml-2 bg-purple-100 text-purple-800 border-purple-200">
+                          Admin
+                        </Badge>
                       )}
                     </div>
-                    <div className="space-y-2 pl-7 mt-1">
+
+                    {/* Email display */}
+                    <div className="pl-7 text-sm text-gray-500 mb-2">
+                      {userData?.email}
+                    </div>
+
+                    {/* Vendor info if applicable */}
+                    {userData?.role === 'vendor' && vendorData && (
+                      <div className="pl-7 mb-3 mt-2 border-t border-gray-100 pt-2">
+                        <div className="font-medium text-gray-700">{vendorData.businessName}</div>
+                        <div className="flex items-center mt-1">
+                          {vendorData.isVerified ? (
+                            <Badge className="bg-green-50 text-green-700 border-green-200">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Verified Vendor
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-amber-50 text-amber-700 border-amber-200">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              Pending Verification
+                            </Badge>
+                          )}
+                        </div>
+                        {vendorData.documentStatus && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Documents: {vendorData.documentStatus.replace('_', ' ')}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Navigation links */}
+                    <div className="space-y-2 pl-7 mt-1 border-t border-gray-100 pt-2">
                       <Link href="/profile" className="block py-1 text-gray-600" onClick={() => setIsMenuOpen(false)}>
-                        Profile
+                        <div className="flex items-center">
+                          <User className="h-4 w-4 mr-2" />
+                          Profile
+                        </div>
                       </Link>
                       <Link href="/settings" className="block py-1 text-gray-600" onClick={() => setIsMenuOpen(false)}>
-                        Settings
+                        <div className="flex items-center">
+                          <Settings className="h-4 w-4 mr-2" />
+                          Settings
+                        </div>
                       </Link>
                       {userData?.role === 'vendor' && (
                         <Link href="/vendor-dashboard" className="block py-1 text-gray-600" onClick={() => setIsMenuOpen(false)}>
-                          Vendor Dashboard
+                          <div className="flex items-center">
+                            <Store className="h-4 w-4 mr-2" />
+                            Vendor Dashboard
+                          </div>
+                        </Link>
+                      )}
+                      {userData?.role === 'admin' && (
+                        <Link href="/admin/dashboard" className="block py-1 text-gray-600" onClick={() => setIsMenuOpen(false)}>
+                          <div className="flex items-center">
+                            <Store className="h-4 w-4 mr-2" />
+                            Admin Dashboard
+                          </div>
                         </Link>
                       )}
                       {userData?.role !== 'vendor' && (
                         <Link href="/bookings" className="block py-1 text-gray-600" onClick={() => setIsMenuOpen(false)}>
-                          My Bookings
+                          <div className="flex items-center">
+                            <ShoppingBag className="h-4 w-4 mr-2" />
+                            My Bookings
+                          </div>
                         </Link>
                       )}
-                      <button 
+                      <button
                         className="block py-1 text-red-600 w-full text-left"
                         onClick={() => {
                           handleLogout();
                           setIsMenuOpen(false);
                         }}
                       >
-                        Logout
+                        <div className="flex items-center">
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Logout
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -375,7 +462,7 @@ export default function Navbar() {
                   </div>
                 </>
               )}
-              
+
               <div className="relative mt-4">
                 <Input type="text" placeholder="Search bikes" className="w-full pr-10 rounded-md border-gray-300" />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">

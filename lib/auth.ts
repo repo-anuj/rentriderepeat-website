@@ -12,6 +12,14 @@ export type UserData = {
   name: string;
   email: string;
   role: string;
+  isVerified?: boolean;
+  createdAt?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  bio?: string;
 }
 
 export type VendorData = {
@@ -19,37 +27,49 @@ export type VendorData = {
   businessName: string;
   isVerified: boolean;
   user: string | ObjectId;
+  businessAddress?: string;
+  phone?: string;
+  documentStatus?: string;
+  createdAt?: string;
 }
 
 // Get user data from MongoDB
 export async function getUserData(userId: string): Promise<UserData | null> {
   const client = await MongoClient.connect(MONGO_URI);
-  
+
   try {
     // Check in both databases for the user
     let user = null;
-    
+
     // First check in 'bikerent' database
     const bikerentDb = client.db('bikerent');
     user = await bikerentDb.collection('users').findOne({ _id: new ObjectId(userId) });
-    
+
     if (!user) {
       // If not found, check in 'test' database
       const testDb = client.db('test');
       user = await testDb.collection('users').findOne({ _id: new ObjectId(userId) });
     }
-    
+
     if (!user) {
       return null;
     }
-    
+
     return {
       _id: user._id.toString(),
       name: user.name,
       email: user.email,
-      role: user.role || 'user'
+      role: user.role || 'user',
+      isVerified: user.isVerified || false,
+      createdAt: user.createdAt || new Date().toISOString(),
+      phone: user.phone || '',
+      address: user.address || '',
+      city: user.city || '',
+      state: user.state || '',
+      pincode: user.pincode || '',
+      bio: user.bio || ''
     };
-    
+
   } catch (error) {
     console.error('Error fetching user data:', error);
     return null;
@@ -61,32 +81,36 @@ export async function getUserData(userId: string): Promise<UserData | null> {
 // Get vendor data from MongoDB
 export async function getVendorData(userId: string): Promise<VendorData | null> {
   const client = await MongoClient.connect(MONGO_URI);
-  
+
   try {
     // Check in both databases for the vendor
     let vendor = null;
-    
+
     // Try test database first (where vendor data is likely stored)
     const testDb = client.db('test');
     vendor = await testDb.collection('vendors').findOne({ user: new ObjectId(userId) });
-    
+
     if (!vendor) {
       // If not found, check in 'bikerent' database
       const bikerentDb = client.db('bikerent');
       vendor = await bikerentDb.collection('vendors').findOne({ user: new ObjectId(userId) });
     }
-    
+
     if (!vendor) {
       return null;
     }
-    
+
     return {
       _id: vendor._id.toString(),
       businessName: vendor.businessName,
       isVerified: vendor.isVerified || false,
-      user: vendor.user.toString()
+      user: vendor.user.toString(),
+      businessAddress: vendor.businessAddress || '',
+      phone: vendor.phone || '',
+      documentStatus: vendor.documentStatus || 'pending',
+      createdAt: vendor.createdAt || new Date().toISOString()
     };
-    
+
   } catch (error) {
     console.error('Error fetching vendor data:', error);
     return null;

@@ -34,35 +34,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Try to connect to backend API first
-    try {
-      const backendResponse = await fetch(`${process.env.BACKEND_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (backendResponse.ok) {
-        const data = await backendResponse.json();
-        return NextResponse.json(data);
-      }
-    } catch (error) {
-      console.log('Backend API error, falling back to direct MongoDB connection');
-    }
+    // Skip backend API attempt and go directly to MongoDB
+    // This is a temporary solution until the backend server is set up
+    console.log('Skipping backend API attempt and using direct MongoDB connection');
 
     // Fallback to direct MongoDB connection if backend API fails
     const client = await MongoClient.connect(MONGO_URI);
-    
+
     try {
       // Check in both databases for the user
       let user = null;
       let dbName = '';
-      
+
       // First check in 'bikerent' database
       const bikerentDb = client.db('bikerent');
       user = await bikerentDb.collection('users').findOne({ email });
-      
+
       if (user) {
         dbName = 'bikerent';
       } else {
@@ -73,54 +60,87 @@ export async function POST(request: NextRequest) {
           dbName = 'test';
         }
       }
-      
+
       if (!user) {
         return NextResponse.json(
           { success: false, message: 'Invalid credentials' },
           { status: 401 }
         );
       }
-      
+
       // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
-      
+
       if (!isMatch) {
         return NextResponse.json(
           { success: false, message: 'Invalid credentials' },
           { status: 401 }
         );
       }
-      
+
       // Check if user is a vendor
       let vendorData = null;
       if (user.role === 'vendor') {
         const db = client.db(dbName);
         vendorData = await db.collection('vendors').findOne({ user: user._id });
       }
-      
+
       // Generate token
       const token = createSessionToken(user._id.toString(), user.role);
-      
-      // Return user data and token
-      return NextResponse.json({
+
+      // Create response with user data and token
+      const response = NextResponse.json({
         success: true,
         token,
         user: {
           _id: user._id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: user.role || 'user',
+          isVerified: user.isVerified || false,
+          createdAt: user.createdAt || new Date().toISOString(),
+          phone: user.phone || '',
+          address: user.address || '',
+          city: user.city || '',
+          state: user.state || '',
+          pincode: user.pincode || '',
+          bio: user.bio || ''
         },
         vendor: vendorData
       });
+
+      // Set token in a cookie (30 days expiry)
+      response.cookies.set({
+        name: 'token',
+        value: token,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
+        path: '/'
+      });
+
+      return response;
     } finally {
       await client.close();
     }
-    
+
   } catch (error) {
     console.error('Error in signin:', error);
+
+    // Provide more detailed error information
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred during sign in';
+    const errorStack = error instanceof Error ? error.stack : '';
+
     return NextResponse.json(
-      { success: false, message: 'An error occurred during sign in' },
+      {
+        success: false,
+        message: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? {
+          stack: errorStack,
+          mongoUri: MONGO_URI ? MONGO_URI.substring(0, 20) + '...' : 'Not defined'
+        } : undefined
+      },
       { status: 500 }
     );
   }
