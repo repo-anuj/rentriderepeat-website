@@ -24,6 +24,10 @@ export default function ProfilePage() {
     pincode: "",
     bio: "",
   })
+  const [documents, setDocuments] = useState({
+    aadharCardImage: "",
+    drivingLicenseImage: "",
+  })
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -40,8 +44,36 @@ export default function ProfilePage() {
         pincode: user.pincode || "",
         bio: user.bio || "",
       })
+
+      // Fetch user documents
+      fetchUserDocuments()
     }
   }, [user])
+
+  // Fetch user documents from the API
+  const fetchUserDocuments = async () => {
+    if (!user) return
+
+    try {
+      const response = await fetch('/api/user/documents', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.data) {
+          setDocuments({
+            aadharCardImage: data.data.aadharCardImage || "",
+            drivingLicenseImage: data.data.drivingLicenseImage || "",
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching user documents:', error)
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -58,7 +90,7 @@ export default function ProfilePage() {
     try {
       // Call the updateProfile function from AuthContext
       const success = await updateProfile(profileData)
-      
+
       if (success) {
         toast.success("Profile updated successfully")
         setIsEditing(false)
@@ -98,7 +130,7 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold mb-6">My Profile</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Summary Card */}
         <Card>
@@ -112,12 +144,12 @@ export default function ProfilePage() {
             <CardTitle className="text-2xl">{user.name}</CardTitle>
             <CardDescription>{user.email}</CardDescription>
             <div className="flex justify-center gap-2 mt-2">
-              <Badge variant="outline" className={user.role === "vendor" ? "bg-blue-50 text-blue-700 border-blue-200" : 
-                                                user.role === "admin" ? "bg-purple-50 text-purple-700 border-purple-200" : 
+              <Badge variant="outline" className={user.role === "vendor" ? "bg-blue-50 text-blue-700 border-blue-200" :
+                                                user.role === "admin" ? "bg-purple-50 text-purple-700 border-purple-200" :
                                                 "bg-gray-50 text-gray-700 border-gray-200"}>
                 {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || "User"}
               </Badge>
-              
+
               {user.isVerified ? (
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                   <CheckCircle className="h-3 w-3 mr-1" />
@@ -158,8 +190,8 @@ export default function ProfilePage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full"
               onClick={() => setIsEditing(true)}
             >
@@ -173,10 +205,11 @@ export default function ProfilePage() {
           <Tabs defaultValue="profile">
             <TabsList className="mb-4">
               <TabsTrigger value="profile">Profile Details</TabsTrigger>
+              <TabsTrigger value="documents">Documents</TabsTrigger>
               {user.role === "vendor" && <TabsTrigger value="business">Business Info</TabsTrigger>}
               <TabsTrigger value="security">Security</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="profile">
               <Card>
                 {isEditing ? (
@@ -267,14 +300,14 @@ export default function ProfilePage() {
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
-                      <Button 
-                        type="button" 
+                      <Button
+                        type="button"
                         variant="outline"
                         onClick={() => setIsEditing(false)}
                       >
                         Cancel
                       </Button>
-                      <Button 
+                      <Button
                         type="submit"
                         disabled={isSaving}
                       >
@@ -330,7 +363,81 @@ export default function ProfilePage() {
                 )}
               </Card>
             </TabsContent>
-            
+
+            <TabsContent value="documents">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Documents</CardTitle>
+                  <CardDescription>Your identification and verification documents</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Aadhar Card</h3>
+                      {documents.aadharCardImage ? (
+                        <div className="border rounded-md p-2">
+                          <img
+                            src={documents.aadharCardImage}
+                            alt="Aadhar Card"
+                            className="max-h-64 mx-auto object-contain"
+                          />
+                          <div className="mt-2 flex justify-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(documents.aadharCardImage, '_blank')}
+                            >
+                              View Full Size
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 p-4 rounded-md text-center text-gray-500">
+                          <p>No Aadhar Card image available</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Driving License</h3>
+                      {documents.drivingLicenseImage ? (
+                        <div className="border rounded-md p-2">
+                          <img
+                            src={documents.drivingLicenseImage}
+                            alt="Driving License"
+                            className="max-h-64 mx-auto object-contain"
+                          />
+                          <div className="mt-2 flex justify-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(documents.drivingLicenseImage, '_blank')}
+                            >
+                              View Full Size
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 p-4 rounded-md text-center text-gray-500">
+                          <p>No Driving License image available</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200">
+                      <div className="flex items-start">
+                        <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5" />
+                        <p className="text-sm text-black">
+                          These documents are used for verification purposes only and are stored securely.
+                          If you need to update your documents, please contact customer support.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {user.role === "vendor" && (
               <TabsContent value="business">
                 <Card>
@@ -384,7 +491,7 @@ export default function ProfilePage() {
                 </Card>
               </TabsContent>
             )}
-            
+
             <TabsContent value="security">
               <Card>
                 <CardHeader>

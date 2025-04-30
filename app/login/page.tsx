@@ -32,19 +32,49 @@ export default function Login() {
     aadharCard: "",
     drivingLicense: "",
     emergencyContact: "",
+    aadharCardImage: "",
+    drivingLicenseImage: "",
     termsAccepted: false
   })
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
-    setFormData((prev) => ({ 
-      ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
-    }))
-    
+    const { name, value, type, checked, files } = e.target
+
+    // Handle file uploads
+    if (type === 'file' && files && files.length > 0) {
+      const file = files[0]
+
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: "File size should be less than 5MB"
+        }))
+        return
+      }
+
+      // Read file as base64
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (reader.result) {
+          setFormData(prev => ({
+            ...prev,
+            [name]: reader.result
+          }))
+        }
+      }
+      reader.readAsDataURL(file)
+    } else {
+      // Handle regular inputs
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }))
+    }
+
     // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => {
@@ -57,10 +87,10 @@ export default function Login() {
 
   const validatePersonalInfo = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.name.trim()) newErrors.name = "Name is required"
     else if (formData.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters"
-    
+
     if (!formData.dob) newErrors.dob = "Date of birth is required"
     else {
       const dobDate = new Date(formData.dob)
@@ -68,53 +98,57 @@ export default function Login() {
       const age = today.getFullYear() - dobDate.getFullYear()
       if (age < 18) newErrors.dob = "You must be at least 18 years old"
     }
-    
+
     if (!formData.gender) newErrors.gender = "Please select your gender"
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const validateContactInfo = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.mobile.trim()) newErrors.mobile = "Mobile number is required"
     else if (!/^\d{10}$/.test(formData.mobile)) newErrors.mobile = "Enter a valid 10-digit mobile number"
-    
-    if (formData.alternatePhone && !/^\d{10}$/.test(formData.alternatePhone)) 
+
+    if (formData.alternatePhone && !/^\d{10}$/.test(formData.alternatePhone))
       newErrors.alternatePhone = "Enter a valid 10-digit phone number"
-    
+
     if (!formData.email.trim()) newErrors.email = "Email is required"
     else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Enter a valid email address"
-    
+
     if (!formData.password.trim()) newErrors.password = "Password is required"
     else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters"
-    
+
     if (!formData.confirmPassword.trim()) newErrors.confirmPassword = "Please confirm your password"
     else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
-    
+
     if (!formData.location.trim()) newErrors.location = "Location is required"
-    
+
     if (!formData.address.trim()) newErrors.address = "Address is required"
     else if (formData.address.trim().length < 10) newErrors.address = "Please provide a complete address"
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const validateDocuments = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.aadharCard.trim()) newErrors.aadharCard = "Aadhar card number is required"
     else if (!/^\d{12}$/.test(formData.aadharCard)) newErrors.aadharCard = "Enter a valid 12-digit Aadhar number"
-    
+
     if (!formData.drivingLicense.trim()) newErrors.drivingLicense = "Driving license number is required"
     else if (formData.drivingLicense.trim().length < 8) newErrors.drivingLicense = "Enter a valid driving license number"
-    
+
     if (!formData.emergencyContact.trim()) newErrors.emergencyContact = "Emergency contact is required"
-    else if (!/^\d{10}$/.test(formData.emergencyContact)) 
+    else if (!/^\d{10}$/.test(formData.emergencyContact))
       newErrors.emergencyContact = "Enter a valid 10-digit emergency contact number"
-    
+
+    // Validate image uploads
+    if (!formData.aadharCardImage) newErrors.aadharCardImage = "Please upload a photo of your Aadhar card"
+    if (!formData.drivingLicenseImage) newErrors.drivingLicenseImage = "Please upload a photo of your driving license"
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -129,7 +163,7 @@ export default function Login() {
 
   const handleNext = () => {
     let isValid = false
-    
+
     switch(stage) {
       case 'personal':
         isValid = validatePersonalInfo()
@@ -162,9 +196,9 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateFinalSubmission()) return
-    
+
     setIsLoading(true)
 
     try {
@@ -181,7 +215,9 @@ export default function Login() {
         address: formData.address,
         aadharCard: formData.aadharCard,
         drivingLicense: formData.drivingLicense,
-        emergencyContact: formData.emergencyContact
+        emergencyContact: formData.emergencyContact,
+        aadharCardImage: formData.aadharCardImage,
+        drivingLicenseImage: formData.drivingLicenseImage
       }
 
       // API call to register user
@@ -201,12 +237,12 @@ export default function Login() {
 
       // Show success message
       toast.success('Registration successful! Welcome to BikeRent.')
-      
+
       // Store token in localStorage if available
       if (data.data?.token) {
         localStorage.setItem('token', data.data.token)
       }
-      
+
       // Redirect to products page after a short delay
       setTimeout(() => {
         router.push("/products")
@@ -283,7 +319,7 @@ export default function Login() {
                 </label>
                 <label className="flex items-center space-x-2">
                   <input
-                    type="radio" 
+                    type="radio"
                     name="gender"
                     value="female"
                     checked={formData.gender === 'female'}
@@ -308,7 +344,7 @@ export default function Login() {
             </div>
           </div>
         )
-      
+
       case 'contact':
         return (
           <div className="space-y-4">
@@ -399,7 +435,7 @@ export default function Login() {
             </div>
           </div>
         )
-      
+
       case 'documents':
         return (
           <div className="space-y-4">
@@ -417,6 +453,44 @@ export default function Login() {
             </div>
 
             <div>
+              <p className="mb-2 text-sm text-gray-700">Aadhar Card Photo</p>
+              <div className={`border-2 border-dashed rounded-lg p-4 text-center ${errors.aadharCardImage ? 'border-red-500' : 'border-gray-300'}`}>
+                <Input
+                  type="file"
+                  name="aadharCardImage"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="hidden"
+                  id="aadharCardImage"
+                />
+                <div
+                  onClick={() => document.getElementById('aadharCardImage')?.click()}
+                  className="cursor-pointer py-4"
+                >
+                  {formData.aadharCardImage ? (
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={formData.aadharCardImage as string}
+                        alt="Aadhar Card"
+                        className="h-32 object-contain mb-2"
+                      />
+                      <p className="text-sm text-gray-600">Click to change image</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm text-gray-600 mt-2">Click to upload Aadhar Card photo</p>
+                      <p className="text-xs text-gray-500">PNG, JPG or JPEG (max. 5MB)</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {errors.aadharCardImage && <p className="text-red-500 text-xs mt-1">{errors.aadharCardImage}</p>}
+            </div>
+
+            <div>
               <p className="mb-2 text-sm text-gray-700">Driving License Number</p>
               <Input
                 type="text"
@@ -427,6 +501,44 @@ export default function Login() {
                 className={`w-full bg-white text-black ${errors.drivingLicense ? 'border-red-500' : 'border-gray-300'}`}
               />
               {errors.drivingLicense && <p className="text-red-500 text-xs mt-1">{errors.drivingLicense}</p>}
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm text-gray-700">Driving License Photo</p>
+              <div className={`border-2 border-dashed rounded-lg p-4 text-center ${errors.drivingLicenseImage ? 'border-red-500' : 'border-gray-300'}`}>
+                <Input
+                  type="file"
+                  name="drivingLicenseImage"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="hidden"
+                  id="drivingLicenseImage"
+                />
+                <div
+                  onClick={() => document.getElementById('drivingLicenseImage')?.click()}
+                  className="cursor-pointer py-4"
+                >
+                  {formData.drivingLicenseImage ? (
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={formData.drivingLicenseImage as string}
+                        alt="Driving License"
+                        className="h-32 object-contain mb-2"
+                      />
+                      <p className="text-sm text-gray-600">Click to change image</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <p className="text-sm text-gray-600 mt-2">Click to upload Driving License photo</p>
+                      <p className="text-xs text-gray-500">PNG, JPG or JPEG (max. 5MB)</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {errors.drivingLicenseImage && <p className="text-red-500 text-xs mt-1">{errors.drivingLicenseImage}</p>}
             </div>
 
             <div>
@@ -444,7 +556,7 @@ export default function Login() {
             </div>
           </div>
         )
-      
+
       case 'review':
         return (
           <div className="space-y-6">
@@ -456,7 +568,7 @@ export default function Login() {
                 </p>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <h3 className="font-medium text-gray-800 mb-1">Personal Information</h3>
@@ -466,7 +578,7 @@ export default function Login() {
                   <p className="text-black"><span className="font-medium">Gender:</span> {formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1)}</p>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="font-medium text-gray-800 mb-1">Contact Information</h3>
                 <div className="bg-gray-50 p-3 rounded-md">
@@ -478,16 +590,35 @@ export default function Login() {
                   <p className="text-black"><span className="font-medium">Address:</span> {formData.address}</p>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="font-medium text-gray-800 mb-1">Documents & Emergency Contact</h3>
                 <div className="bg-gray-50 p-3 rounded-md">
                   <p className="text-black"><span className="font-medium">Aadhar Card:</span> {formData.aadharCard}</p>
                   <p className="text-black"><span className="font-medium">Driving License:</span> {formData.drivingLicense}</p>
                   <p className="text-black"><span className="font-medium">Emergency Contact:</span> {formData.emergencyContact}</p>
+
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-black text-sm font-medium mb-1">Aadhar Card Image:</p>
+                      <img
+                        src={formData.aadharCardImage as string}
+                        alt="Aadhar Card"
+                        className="h-24 object-contain border rounded"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-black text-sm font-medium mb-1">Driving License Image:</p>
+                      <img
+                        src={formData.drivingLicenseImage as string}
+                        alt="Driving License"
+                        className="h-24 object-contain border rounded"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              
+
               <div className="pt-2">
                 <label className="flex items-start space-x-2">
                   <input
@@ -498,8 +629,8 @@ export default function Login() {
                     className={`h-4 w-4 mt-1 text-[#ffc700] ${errors.termsAccepted ? 'border-red-500' : ''}`}
                   />
                   <span className="text-sm text-black">
-                    I confirm that all the information provided is accurate and I agree to the 
-                    <Link href="#" className="text-primary font-medium hover:underline ml-1">Terms & Conditions</Link> and 
+                    I confirm that all the information provided is accurate and I agree to the
+                    <Link href="#" className="text-primary font-medium hover:underline ml-1">Terms & Conditions</Link> and
                     <Link href="#" className="text-primary font-medium hover:underline ml-1">Privacy Policy</Link>
                   </span>
                 </label>
@@ -508,12 +639,12 @@ export default function Login() {
             </div>
           </div>
         )
-      
+
       default:
         return null
     }
   }
-  
+
   const getStageTitle = () => {
     switch(stage) {
       case 'personal': return 'Personal Information';
@@ -555,15 +686,15 @@ export default function Login() {
               <h1 className="text-2xl text-black font-bold">Get Started with BikeRent</h1>
               <p className="text-gray-700 mt-2">Fill out the form below to register</p>
             </div>
-            
+
             {/* Progress bar */}
             <div className="w-full bg-gray-200 h-2 rounded-full mt-4 mb-6">
-              <div 
+              <div
                 className="bg-primary h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress[stage]}%` }}
               ></div>
             </div>
-            
+
             {/* Step indicator */}
             <div className="flex justify-between mb-4">
               <div className="text-sm font-medium text-black">
@@ -598,9 +729,9 @@ export default function Login() {
                     Back
                   </Button>
                 )}
-                
+
                 {stage !== 'personal' ? <div></div> : <div></div>}
-                
+
                 {stage !== 'review' ? (
                   <Button
                     type="button"
@@ -627,7 +758,7 @@ export default function Login() {
                   </Button>
                 )}
               </div>
-              
+
               <div className="text-center text-sm text-gray-700 pt-2">
                 <p>
                   Already have an account?{" "}

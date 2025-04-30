@@ -20,20 +20,24 @@ export async function connectToDatabase() {
 export async function registerUser(userData: any) {
   const db = await connectToDatabase();
   const usersCollection = db.collection('users');
-  
+  const documentsCollection = db.collection('userDocuments');
+
   // Check if user already exists
   const existingUser = await usersCollection.findOne({ email: userData.email });
   if (existingUser) {
     throw new Error('User with this email already exists');
   }
-  
+
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(userData.password, salt);
-  
+
+  // Extract document images from userData
+  const { aadharCardImage, drivingLicenseImage, ...userDataWithoutImages } = userData;
+
   // Prepare user data
   const user = {
-    ...userData,
+    ...userDataWithoutImages,
     password: hashedPassword,
     role: 'user',
     isVerified: false,
@@ -41,18 +45,29 @@ export async function registerUser(userData: any) {
     createdAt: new Date(),
     updatedAt: new Date()
   };
-  
+
   // Insert user
   const result = await usersCollection.insertOne(user);
-  
+  const userId = result.insertedId.toString();
+
+  // Store document images separately
+  if (aadharCardImage || drivingLicenseImage) {
+    await documentsCollection.insertOne({
+      userId: result.insertedId,
+      aadharCardImage: aadharCardImage || null,
+      drivingLicenseImage: drivingLicenseImage || null,
+      uploadedAt: new Date()
+    });
+  }
+
   // Remove password from return object
   const { password, ...userWithoutPassword } = user;
-  
+
   return {
     success: true,
     data: {
       user: userWithoutPassword,
-      token: generateToken(result.insertedId.toString())
+      token: generateToken(userId)
     }
   };
 }
