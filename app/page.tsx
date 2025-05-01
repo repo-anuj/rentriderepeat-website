@@ -66,7 +66,7 @@ export default function Home() {
       price: 1200,
       rating: 4.6,
       image:
-        "https://images.unsplash.com/photo-1609778269131-b74448db6d3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://5.imimg.com/data5/SELLER/Default/2022/9/OZ/JU/RL/58085673/bajaj-pulsar-ns200-bike.jpg",
     },
     {
       id: 3,

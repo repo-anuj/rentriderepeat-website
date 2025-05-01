@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       if (res.data.success) {
         setUser(res.data.data);
         toast.success("Vendor registration successful");
-        router.push("/vendor/dashboard");
+        router.push("/vendor-dashboard");
         return true;
       }
     } catch (err) {
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
 
         // Redirect based on user role
         if (userData.role === "vendor") {
-          router.push("/vendor/dashboard");
+          router.push("/vendor-dashboard");
         } else if (userData.role === "admin") {
           router.push("/admin/dashboard");
         } else {
