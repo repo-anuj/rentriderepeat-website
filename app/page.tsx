@@ -84,7 +84,7 @@ export default function Home() {
       price: 1800,
       rating: 4.7,
       image:
-        "https://images.unsplash.com/photo-1635073902132-a35c64035146?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        "https://bd.gaadicdn.com/processedimages/tvs/tvs-akula-310/640X309/tvs-akula-3105e874b3aa30e0.jpg",
     },
   ]
 
